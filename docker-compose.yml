@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # Base de données InfluxDB v2
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: iot-influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password123
+      - DOCKER_INFLUXDB_INIT_ORG=iot-sensors
+      - DOCKER_INFLUXDB_INIT_BUCKET=sensor-data
+      - DOCKER_INFLUXDB_INIT_RETENTION=30d
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
+    networks:
+      - iot-network
+    restart: unless-stopped
+    labels:
+      - "project=iot-sensors-ucum"
+      - "component=database"
+
+  # Broker MQTT Mosquitto
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: iot-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - iot-network
+    restart: unless-stopped
+    labels:
+      - "project=iot-sensors-ucum"
+      - "component=messaging"
+
+  # Telegraf pour collecte des données MQTT vers InfluxDB
+  telegraf:
+    image: telegraf:1.28-alpine
+    container_name: iot-telegraf
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    networks:
+      - iot-network
+    depends_on:
+      - influxdb
+      - mosquitto
+    restart: unless-stopped
+    labels:
+      - "project=iot-sensors-ucum"
+      - "component=collector"
+
+  # Dashboard Grafana
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: iot-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - iot-network
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+    labels:
+      - "project=iot-sensors-ucum"
+      - "component=visualization"
+
+volumes:
+  influxdb_data:
+    name: iot-influxdb-data
+  grafana_data:
+    name: iot-grafana-data
+
+networks:
+  iot-network:
+    driver: bridge
+    name: iot-sensors-network

@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB-IoT-UCUM
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: iot-sensors
+      defaultBucket: sensor-data
+      tlsSkipVerify: true
+    secureJsonData:
+      token: my-super-secret-auth-token
+    editable: true
