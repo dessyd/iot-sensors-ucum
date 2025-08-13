@@ -1,11 +1,11 @@
 /*
  * Projet IoT Sensors - Arduino MKR1010 + MKR ENV Shield
  * Conforme au standard UCUM pour les unités
- * Version avec calibration capteurs et intervalles intelligents
+ * Version avec profils de fréquence prédéfinis (LOW/MEDIUM/HIGH)
  * 
  * Auteur: Dominique Dessy
  * Date: Août 2025
- * Version: 1.7
+ * Version: 1.8
  */
 
 #include <RTCZero.h>
@@ -40,7 +40,7 @@ void setup() {
     Serial.begin(SERIAL_BAUD);
     while (!Serial);
     Serial.println("=== Arduino IoT Sensors - Standard UCUM ===");
-    Serial.println("Version: 1.7 (Smart Intervals)");
+    Serial.println("Version: 1.8 (Frequency Profiles)");
     Serial.println("Auteur: Dominique Dessy");
   }
 
@@ -65,9 +65,16 @@ void setup() {
   Serial.println("Arduino prêt - ID: " + deviceId);
   Serial.println("Unités conformes standard UCUM");
   
-  // Affichage des corrections de calibration appliquées
+  // Affichage de la configuration
   if (DEBUG_SERIAL) {
-    Serial.println("=== Configuration intervalles ===");
+    Serial.println("=== Configuration fréquence ===");
+    #if defined(MEASUREMENT_FREQUENCY) && (MEASUREMENT_FREQUENCY == HIGH)
+      Serial.println("Fréquence: HIGH (temps réel)");
+    #elif defined(MEASUREMENT_FREQUENCY) && (MEASUREMENT_FREQUENCY == LOW)
+      Serial.println("Fréquence: LOW (économe en énergie)");
+    #else
+      Serial.println("Fréquence: MEDIUM (équilibré)");
+    #endif
     Serial.println("Mesure: " + String(MEASUREMENT_INTERVAL/1000) + "s");
     Serial.println("Keepalive: " + String(KEEPALIVE_INTERVAL/1000) + "s (" + String(KEEPALIVE_MULTIPLIER) + "x mesure)");
     
@@ -304,7 +311,7 @@ void sendKeepalive() {
   DynamicJsonDocument doc(512);
   doc["status"] = "online";
   doc["ip_address"] = WiFi.localIP().toString();
-  doc["firmware_version"] = "1.7";
+  doc["firmware_version"] = "1.8";
   doc["timestamp"] = getTimestamp();
 
   JsonObject sensors = doc.createNestedObject("sensors");

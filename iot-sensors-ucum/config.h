@@ -14,16 +14,32 @@
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_PREFIX "arduino_mkr_"
 
-// Intervalles de mesure (en millisecondes)
-#define MEASUREMENT_INTERVAL 30000      // 30 secondes (Int1) - Intervalle entre mesures
-#define KEEPALIVE_MULTIPLIER 10          // Keepalive = MEASUREMENT_INTERVAL × MULTIPLIER
-#define KEEPALIVE_INTERVAL (MEASUREMENT_INTERVAL * KEEPALIVE_MULTIPLIER)  // 5 minutes (Int2)
-#define SENSOR_READ_DELAY 2000           // Délai entre lectures capteurs
+// Configuration de la fréquence de mesure (simple et intuitive)
+// Valeurs possibles : LOW, MEDIUM, HIGH
+// Si non défini ou valeur invalide : MEDIUM par défaut
+#define MEASUREMENT_FREQUENCY MEDIUM
 
-// Exemples de configurations d'intervalles:
-// MEASUREMENT_INTERVAL=10000, KEEPALIVE_MULTIPLIER=6  -> Mesure: 10s, Keepalive: 1min
-// MEASUREMENT_INTERVAL=60000, KEEPALIVE_MULTIPLIER=5  -> Mesure: 1min, Keepalive: 5min  
-// MEASUREMENT_INTERVAL=30000, KEEPALIVE_MULTIPLIER=20 -> Mesure: 30s, Keepalive: 10min
+// Définition des profils de fréquence
+#define LOW    1    // Économe en énergie : Mesure 1min, Keepalive 15min
+#define MEDIUM 2    // Équilibré (défaut) : Mesure 30s, Keepalive 5min  
+#define HIGH   3    // Temps réel : Mesure 10s, Keepalive 1min
+
+// Configuration automatique des intervalles selon la fréquence
+#if defined(MEASUREMENT_FREQUENCY) && (MEASUREMENT_FREQUENCY == HIGH)
+  #define MEASUREMENT_INTERVAL 10000      // 10 secondes
+  #define KEEPALIVE_MULTIPLIER 6          // 6 × 10s = 1 minute
+#elif defined(MEASUREMENT_FREQUENCY) && (MEASUREMENT_FREQUENCY == LOW)
+  #define MEASUREMENT_INTERVAL 60000      // 60 secondes (1 minute)
+  #define KEEPALIVE_MULTIPLIER 15         // 15 × 1min = 15 minutes
+#else
+  // MEDIUM par défaut (ou si MEASUREMENT_FREQUENCY non défini/invalide)
+  #define MEASUREMENT_INTERVAL 30000      // 30 secondes
+  #define KEEPALIVE_MULTIPLIER 10         // 10 × 30s = 5 minutes
+#endif
+
+// Calcul automatique du keepalive
+#define KEEPALIVE_INTERVAL (MEASUREMENT_INTERVAL * KEEPALIVE_MULTIPLIER)
+#define SENSOR_READ_DELAY 2000           // Délai entre lectures capteurs
 
 // Topics MQTT
 #define TOPIC_PREFIX "sensors/"
