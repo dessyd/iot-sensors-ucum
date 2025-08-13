@@ -38,10 +38,10 @@ Arduino MKR1010 + ENV Shield
 
 ```text
 iot-sensors-ucum/
-├── arduino/                          # → Lien vers ~/Documents/Arduino/iot-sensors-ucum/
+├── iot-sensors-ucum/                 # → Code source pour le microcontrôleur Arduino MKR WiFi 1010
 │   ├── iot-sensors-ucum.ino         # Code principal Arduino
 │   ├── config.h                      # Configuration avec codes UCUM
-│   └── arduino_secrets.h.template   # Template pour paramètres WiFi/MQTT
+│   └── arduino_secrets.h.template   # Template pour les secrets (WiFi/MQTT)
 ├── docker/
 │   └── docker-compose.yml           # Orchestration des services
 ├── telegraf/
@@ -87,11 +87,11 @@ cd iot-sensors-ucum
 cd ~/Documents/Arduino/iot-sensors-ucum
 
 # Copie et édition des secrets
-cp arduino_secrets.h.template arduino_secrets.h
-# Éditer arduino_secrets.h avec vos paramètres WiFi
+cp iot-sensors-ucum/arduino_secrets.h.template iot-sensors-ucum/arduino_secrets.h
+# Éditer iot-sensors-ucum/arduino_secrets.h avec vos paramètres WiFi
 ```
 
-**Paramètres à configurer dans `arduino_secrets.h` :**
+**Paramètres à configurer dans `iot-sensors-ucum/arduino_secrets.h` :**
 ```cpp
 #define SECRET_SSID "VotreSSID"
 #define SECRET_PASS "VotreMotDePasse"
@@ -189,7 +189,7 @@ Le projet utilise les codes UCUM officiels :
 
 1. **Configuration réseau** : Même SSID/mot de passe WiFi
 2. **ID unique** : Généré automatiquement via puce crypto ECCX08
-3. **Location** : Modifier `SECRET_DEVICE_LOCATION` dans `arduino_secrets.h`
+3. **Location** : Modifier `SECRET_DEVICE_LOCATION` dans `iot-sensors-ucum/arduino_secrets.h`
 4. **Topics MQTT** : Automatiquement `sensors/{device_id}/{sensor_type}`
 
 ### Personnalisation des seuils
@@ -329,7 +329,7 @@ curl -X GET "http://localhost:3000/api/health"
 ### Bonnes pratiques implémentées
 
 - **Authentification MQTT** : Utilisateur/mot de passe requis
-- **Secrets séparés** : Fichier `arduino_secrets.h` exclu de Git
+- **Secrets séparés** : Fichier `iot-sensors-ucum/arduino_secrets.h` exclu de Git
 - **Tokens InfluxDB** : Authentication token pour API
 - **Réseau isolé** : Docker network dédié
 - **Logs de sécurité** : Connexions/déconnexions tracées
@@ -348,7 +348,7 @@ curl -X GET "http://localhost:3000/api/health"
 
 **Arduino ne se connecte pas au WiFi**
 ```cpp
-// Vérifier dans arduino_secrets.h
+// Vérifier dans iot-sensors-ucum/arduino_secrets.h
 #define SECRET_SSID "VotreSSID"     // Correct ?
 #define SECRET_PASS "VotrePassword" // Correct ?
 ```

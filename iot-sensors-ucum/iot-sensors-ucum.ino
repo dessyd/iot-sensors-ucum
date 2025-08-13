@@ -20,7 +20,7 @@
 // Clients réseau et temps
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
-RTCZero rtc;
+RTCZero rtc; // RTC pour la gestion du temps
 
 // Variables globales
 String deviceId;
