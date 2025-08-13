@@ -34,6 +34,10 @@
 // Format des messages MQTT
 #define USE_COMPACT_FORMAT true  // true = format compact, false = format UCUM complet
 
+// Gestion du flag RETAIN pour les messages MQTT
+#define USE_RETAIN_STATUS false        // true = status retained, false = monitoring temps réel
+#define USE_RETAIN_MEASUREMENTS false  // true = mesures retained, false = flux temps réel
+
 // Structure pour les capteurs avec codes UCUM standardisés
 struct SensorConfigUCUM {
   String name;                    // Nom du capteur

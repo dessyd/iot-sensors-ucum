@@ -1,11 +1,11 @@
 /*
  * Projet IoT Sensors - Arduino MKR1010 + MKR ENV Shield
  * Conforme au standard UCUM pour les unités
- * Version optimisée avec RTC et précision des flottants
+ * Version optimisée avec RTC et contrôle des flags RETAIN MQTT
  * 
  * Auteur: Dominique Dessy
  * Date: Août 2025
- * Version: 1.4
+ * Version: 1.5
  */
 
 #include <RTCZero.h>
@@ -40,7 +40,7 @@ void setup() {
     Serial.begin(SERIAL_BAUD);
     while (!Serial);
     Serial.println("=== Arduino IoT Sensors - Standard UCUM ===");
-    Serial.println("Version: 1.4 (LWT Payload Fix)");
+    Serial.println("Version: 1.5 (MQTT RETAIN Fix)");
     Serial.println("Auteur: Dominique Dessy");
   }
 
@@ -252,12 +252,13 @@ void sendMeasurementUCUM(String sensorType, float value, SensorConfigUCUM config
   String payload;
   serializeJson(doc, payload);
   
-  mqttClient.beginMessage(topic);
+  // Utilisation de la configuration pour le flag retain
+  mqttClient.beginMessage(topic, USE_RETAIN_MEASUREMENTS);
   mqttClient.print(payload);
   mqttClient.endMessage();
 
   if (DEBUG_SERIAL) {
-    Serial.println("-> Sent: " + payload);
+    Serial.println("-> Sent" + String(USE_RETAIN_MEASUREMENTS ? " (retained)" : "") + ": " + payload);
   }
 }
 
@@ -274,12 +275,13 @@ void sendMeasurementUCUMCompact(String sensorType, float value, SensorConfigUCUM
   String payload;
   serializeJson(doc, payload);
   
-  mqttClient.beginMessage(topic);
+  // Utilisation de la configuration pour le flag retain
+  mqttClient.beginMessage(topic, USE_RETAIN_MEASUREMENTS);
   mqttClient.print(payload);
   mqttClient.endMessage();
 
   if (DEBUG_SERIAL) {
-    Serial.println("-> Sent Compact: " + payload);
+    Serial.println("-> Sent Compact" + String(USE_RETAIN_MEASUREMENTS ? " (retained)" : "") + ": " + payload);
   }
 }
 
@@ -289,7 +291,7 @@ void sendKeepalive() {
   DynamicJsonDocument doc(512);
   doc["status"] = "online";
   doc["ip_address"] = WiFi.localIP().toString();
-  doc["firmware_version"] = "1.4";
+  doc["firmware_version"] = "1.5";
   doc["timestamp"] = getTimestamp();
 
   JsonObject sensors = doc.createNestedObject("sensors");
@@ -301,13 +303,13 @@ void sendKeepalive() {
   String payload;
   serializeJson(doc, payload);
 
-  // Envoyer le message avec le drapeau de rétention
-  mqttClient.beginMessage(topic, true);
+  // Utilisation de la configuration pour le flag retain des status
+  mqttClient.beginMessage(topic, USE_RETAIN_STATUS);
   mqttClient.print(payload);
   mqttClient.endMessage();
 
   if (DEBUG_SERIAL) {
-    Serial.println("-> Keepalive Sent: " + payload);
+    Serial.println("-> Keepalive Sent" + String(USE_RETAIN_STATUS ? " (retained)" : "") + ": " + payload);
   }
 }
 
@@ -329,13 +331,13 @@ void sendKeepaliveCompact() {
   String payload;
   serializeJson(doc, payload);
 
-  // Envoyer le message avec le drapeau de rétention
-  mqttClient.beginMessage(topic, true);
+  // Utilisation de la configuration pour le flag retain des status
+  mqttClient.beginMessage(topic, USE_RETAIN_STATUS);
   mqttClient.print(payload);
   mqttClient.endMessage();
 
   if (DEBUG_SERIAL) {
-    Serial.println("-> Keepalive Compact Sent: " + payload);
+    Serial.println("-> Keepalive Compact Sent" + String(USE_RETAIN_STATUS ? " (retained)" : "") + ": " + payload);
   }
 }
 
