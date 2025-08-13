@@ -1,11 +1,11 @@
 /*
  * Projet IoT Sensors - Arduino MKR1010 + MKR ENV Shield
  * Conforme au standard UCUM pour les unités
- * Version optimisée avec RTC et contrôle des flags RETAIN MQTT
+ * Version avec calibration des capteurs et contrôle RETAIN MQTT
  * 
  * Auteur: Dominique Dessy
  * Date: Août 2025
- * Version: 1.5
+ * Version: 1.6
  */
 
 #include <RTCZero.h>
@@ -40,7 +40,7 @@ void setup() {
     Serial.begin(SERIAL_BAUD);
     while (!Serial);
     Serial.println("=== Arduino IoT Sensors - Standard UCUM ===");
-    Serial.println("Version: 1.5 (MQTT RETAIN Fix)");
+    Serial.println("Version: 1.6 (Sensor Calibration)");
     Serial.println("Auteur: Dominique Dessy");
   }
 
@@ -64,6 +64,15 @@ void setup() {
   
   Serial.println("Arduino prêt - ID: " + deviceId);
   Serial.println("Unités conformes standard UCUM");
+  
+  // Affichage des corrections de calibration appliquées
+  if (DEBUG_SERIAL) {
+    Serial.println("=== Corrections de calibration ===");
+    Serial.println("Température: -" + String(TEMPERATURE_OFFSET) + " °C");
+    Serial.println("Humidité: -" + String(HUMIDITY_OFFSET) + " %RH");
+    Serial.println("Pression: -" + String(PRESSURE_OFFSET) + " hPa");
+    Serial.println("Luminosité: -" + String(ILLUMINANCE_OFFSET) + " lx");
+  }
   
   // Test des tailles de messages (optionnel)
   if (DEBUG_SERIAL) {
@@ -188,11 +197,11 @@ void reconnectMQTT() {
 }
 
 void readAndSendIfChanged() {
-  // Lecture des capteurs
-  float temperature = ENV.readTemperature();
-  float humidity = ENV.readHumidity();  
-  float pressure = ENV.readPressure();
-  float illuminance = ENV.readIlluminance();
+  // Lecture des capteurs avec application des corrections de calibration
+  float temperature = ENV.readTemperature() - TEMPERATURE_OFFSET;
+  float humidity = ENV.readHumidity() - HUMIDITY_OFFSET;  
+  float pressure = ENV.readPressure() - PRESSURE_OFFSET;
+  float illuminance = ENV.readIlluminance() - ILLUMINANCE_OFFSET;
 
   delay(SENSOR_READ_DELAY);
 
@@ -291,14 +300,14 @@ void sendKeepalive() {
   DynamicJsonDocument doc(512);
   doc["status"] = "online";
   doc["ip_address"] = WiFi.localIP().toString();
-  doc["firmware_version"] = "1.5";
+  doc["firmware_version"] = "1.6";
   doc["timestamp"] = getTimestamp();
 
   JsonObject sensors = doc.createNestedObject("sensors");
-  sensors["temperature"] = round(lastTemperature * 100.0) / 100.0;
-  sensors["humidity"] = round(lastHumidity * 100.0) / 100.0;
-  sensors["pressure"] = round(lastPressure * 100.0) / 100.0;
-  sensors["illuminance"] = round(lastIlluminance * 100.0) / 100.0;
+  sensors["temperature"] = round((ENV.readTemperature() - TEMPERATURE_OFFSET) * 100.0) / 100.0;
+  sensors["humidity"] = round((ENV.readHumidity() - HUMIDITY_OFFSET) * 100.0) / 100.0;
+  sensors["pressure"] = round((ENV.readPressure() - PRESSURE_OFFSET) * 100.0) / 100.0;
+  sensors["illuminance"] = round((ENV.readIlluminance() - ILLUMINANCE_OFFSET) * 100.0) / 100.0;
 
   String payload;
   serializeJson(doc, payload);
@@ -323,10 +332,10 @@ void sendKeepaliveCompact() {
   doc["t"] = getTimestamp();
 
   JsonObject s = doc.createNestedObject("s");
-  s["temp"] = round(lastTemperature * 100.0) / 100.0;
-  s["hum"] = round(lastHumidity * 100.0) / 100.0;
-  s["press"] = round(lastPressure * 100.0) / 100.0;
-  s["lux"] = round(lastIlluminance * 100.0) / 100.0;
+  s["temp"] = round((ENV.readTemperature() - TEMPERATURE_OFFSET) * 100.0) / 100.0;
+  s["hum"] = round((ENV.readHumidity() - HUMIDITY_OFFSET) * 100.0) / 100.0;
+  s["press"] = round((ENV.readPressure() - PRESSURE_OFFSET) * 100.0) / 100.0;
+  s["lux"] = round((ENV.readIlluminance() - ILLUMINANCE_OFFSET) * 100.0) / 100.0;
 
   String payload;
   serializeJson(doc, payload);

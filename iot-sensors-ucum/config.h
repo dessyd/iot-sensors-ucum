@@ -38,6 +38,12 @@
 #define USE_RETAIN_STATUS false        // true = status retained, false = monitoring temps réel
 #define USE_RETAIN_MEASUREMENTS false  // true = mesures retained, false = flux temps réel
 
+// Corrections de calibration des capteurs (valeurs à soustraire aux lectures)
+#define TEMPERATURE_OFFSET 2.5    // °C - Correction température (valeur à soustraire)
+#define HUMIDITY_OFFSET 0.0       // %RH - Correction humidité  
+#define PRESSURE_OFFSET 0.0       // hPa - Correction pression
+#define ILLUMINANCE_OFFSET 0.0    // lx - Correction luminosité
+
 // Structure pour les capteurs avec codes UCUM standardisés
 struct SensorConfigUCUM {
   String name;                    // Nom du capteur
