@@ -15,9 +15,15 @@
 #define MQTT_CLIENT_PREFIX "arduino_mkr_"
 
 // Intervalles de mesure (en millisecondes)
-#define MEASUREMENT_INTERVAL 30000    // 30 secondes (Int1)
-#define KEEPALIVE_INTERVAL 300000     // 5 minutes (Int2)
-#define SENSOR_READ_DELAY 2000        // Délai entre lectures capteurs
+#define MEASUREMENT_INTERVAL 30000      // 30 secondes (Int1) - Intervalle entre mesures
+#define KEEPALIVE_MULTIPLIER 10          // Keepalive = MEASUREMENT_INTERVAL × MULTIPLIER
+#define KEEPALIVE_INTERVAL (MEASUREMENT_INTERVAL * KEEPALIVE_MULTIPLIER)  // 5 minutes (Int2)
+#define SENSOR_READ_DELAY 2000           // Délai entre lectures capteurs
+
+// Exemples de configurations d'intervalles:
+// MEASUREMENT_INTERVAL=10000, KEEPALIVE_MULTIPLIER=6  -> Mesure: 10s, Keepalive: 1min
+// MEASUREMENT_INTERVAL=60000, KEEPALIVE_MULTIPLIER=5  -> Mesure: 1min, Keepalive: 5min  
+// MEASUREMENT_INTERVAL=30000, KEEPALIVE_MULTIPLIER=20 -> Mesure: 30s, Keepalive: 10min
 
 // Topics MQTT
 #define TOPIC_PREFIX "sensors/"

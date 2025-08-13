@@ -1,11 +1,11 @@
 /*
  * Projet IoT Sensors - Arduino MKR1010 + MKR ENV Shield
  * Conforme au standard UCUM pour les unités
- * Version avec calibration des capteurs et contrôle RETAIN MQTT
+ * Version avec calibration capteurs et intervalles intelligents
  * 
  * Auteur: Dominique Dessy
  * Date: Août 2025
- * Version: 1.6
+ * Version: 1.7
  */
 
 #include <RTCZero.h>
@@ -40,7 +40,7 @@ void setup() {
     Serial.begin(SERIAL_BAUD);
     while (!Serial);
     Serial.println("=== Arduino IoT Sensors - Standard UCUM ===");
-    Serial.println("Version: 1.6 (Sensor Calibration)");
+    Serial.println("Version: 1.7 (Smart Intervals)");
     Serial.println("Auteur: Dominique Dessy");
   }
 
@@ -67,6 +67,10 @@ void setup() {
   
   // Affichage des corrections de calibration appliquées
   if (DEBUG_SERIAL) {
+    Serial.println("=== Configuration intervalles ===");
+    Serial.println("Mesure: " + String(MEASUREMENT_INTERVAL/1000) + "s");
+    Serial.println("Keepalive: " + String(KEEPALIVE_INTERVAL/1000) + "s (" + String(KEEPALIVE_MULTIPLIER) + "x mesure)");
+    
     Serial.println("=== Corrections de calibration ===");
     Serial.println("Température: -" + String(TEMPERATURE_OFFSET) + " °C");
     Serial.println("Humidité: -" + String(HUMIDITY_OFFSET) + " %RH");
@@ -300,7 +304,7 @@ void sendKeepalive() {
   DynamicJsonDocument doc(512);
   doc["status"] = "online";
   doc["ip_address"] = WiFi.localIP().toString();
-  doc["firmware_version"] = "1.6";
+  doc["firmware_version"] = "1.7";
   doc["timestamp"] = getTimestamp();
 
   JsonObject sensors = doc.createNestedObject("sensors");
