@@ -14,15 +14,15 @@
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_PREFIX "arduino_mkr_"
 
-// Configuration de la fréquence de mesure (simple et intuitive)
-// Valeurs possibles : LOW, MEDIUM, HIGH
-// Si non défini ou valeur invalide : MEDIUM par défaut
-#define MEASUREMENT_FREQUENCY MEDIUM
-
-// Définition des profils de fréquence
+// Définition des profils de fréquence (DOIT être défini AVANT utilisation)
 #define LOW    1    // Économe en énergie : Mesure 1min, Keepalive 15min
 #define MEDIUM 2    // Équilibré (défaut) : Mesure 30s, Keepalive 5min  
 #define HIGH   3    // Temps réel : Mesure 10s, Keepalive 1min
+
+// Configuration de la fréquence de mesure (simple et intuitive)
+// Valeurs possibles : LOW, MEDIUM, HIGH
+// Si non défini ou valeur invalide : MEDIUM par défaut
+#define MEASUREMENT_FREQUENCY HIGH
 
 // Configuration automatique des intervalles selon la fréquence
 #if defined(MEASUREMENT_FREQUENCY) && (MEASUREMENT_FREQUENCY == HIGH)
