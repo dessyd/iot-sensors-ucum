@@ -1,3 +1,26 @@
+Metadata-Version: 2.4
+Name: iot-sensors-ucum-mcp
+Version: 1.0.0
+Summary: Serveur MCP pour intégration MQTT avec Claude - IoT Sensors UCUM
+Author-email: Dominique Dessy <dominique@example.com>
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: mcp>=1.0.0
+Requires-Dist: paho-mqtt>=2.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: asyncio-mqtt>=0.16.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: flake8>=6.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: coverage>=7.0.0; extra == "dev"
+Dynamic: license-file
+
 # IoT Sensors UCUM - Serveur MCP MQTT
 
 Serveur MCP (Model Context Protocol) pour l'intégration MQTT avec Claude, spécialement conçu pour les projets IoT avec support des unités UCUM.

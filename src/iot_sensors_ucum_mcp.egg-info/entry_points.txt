@@ -1,0 +1,2 @@
+[console_scripts]
+iot-sensors-mcp = iot_sensors_mcp.server:main

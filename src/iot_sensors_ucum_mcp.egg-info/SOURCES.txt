@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+src/iot_sensors_mcp/__init__.py
+src/iot_sensors_mcp/mqtt_client.py
+src/iot_sensors_mcp/server.py
+src/iot_sensors_ucum_mcp.egg-info/PKG-INFO
+src/iot_sensors_ucum_mcp.egg-info/SOURCES.txt
+src/iot_sensors_ucum_mcp.egg-info/dependency_links.txt
+src/iot_sensors_ucum_mcp.egg-info/entry_points.txt
+src/iot_sensors_ucum_mcp.egg-info/requires.txt
+src/iot_sensors_ucum_mcp.egg-info/top_level.txt
