@@ -7,18 +7,21 @@ Ce guide détaille le processus complet de déploiement du système IoT Sensors 
 ## 📋 Prérequis système
 
 ### Matériel requis
+
 - **Arduino MKR WiFi 1010** avec shield MKR ENV
 - **Ordinateur hôte** : macOS, Linux ou Windows avec Docker
 - **Réseau WiFi** 2.4GHz ou 5GHz avec accès Internet
 - **Thermomètre de référence** pour calibration (recommandé)
 
 ### Logiciels requis
+
 - **Docker** >= 20.10.0
 - **Docker Compose** >= 2.0.0  
 - **Arduino IDE** >= 2.0.0
 - **Git** pour le clonage du repository
 
 ### Bibliothèques Arduino
+
 ```
 WiFiNINA >= 1.8.13
 ArduinoMqttClient >= 0.1.5
@@ -30,12 +33,14 @@ ArduinoJson >= 6.19.4
 ## 🚀 Installation initiale
 
 ### 1. Clonage du projet
+
 ```bash
 git clone <repository-url> iot-sensors-ucum
 cd iot-sensors-ucum
 ```
 
 ### 2. Vérification des prérequis
+
 ```bash
 # Vérifier Docker
 docker --version
@@ -48,25 +53,20 @@ df -h .
 ping google.com
 ```
 
-### 3. Installation automatique
+### 3. Configuration de l'environnement
+
 ```bash
-# Script d'installation complet
-./install.sh
+# Copier le template d'environnement
+cp .env.example .env
 
-# Ou installation basique sans Arduino
-./install_basic.sh
+# Éditer les credentials
+nano .env
 ```
-
-Le script `install.sh` effectue :
-- Création de l'environnement virtuel Python
-- Installation des dépendances
-- Configuration des services Docker
-- Création des dossiers de logs
-- Génération des certificats si nécessaire
 
 ## ⚙️ Configuration pré-déploiement
 
 ### 1. Configuration des credentials
+
 ```bash
 # Copier le template d'environnement
 cp .env.example .env
@@ -76,6 +76,7 @@ nano .env
 ```
 
 **Variables importantes dans .env :**
+
 ```bash
 # MQTT
 MQTT_USERNAME=mqtt_user
@@ -93,6 +94,7 @@ GRAFANA_PASSWORD=changez_moi_grafana
 ```
 
 ### 2. Configuration Arduino
+
 ```bash
 # Aller dans le dossier Arduino (lien symbolique ou copie)
 cd ~/Documents/Arduino/iot-sensors-ucum
@@ -105,6 +107,7 @@ nano arduino_secrets.h
 ```
 
 **Contenu arduino_secrets.h :**
+
 ```cpp
 #define SECRET_SSID "VotreReseauWiFi"
 #define SECRET_PASS "VotreMotDePasseWiFi"
@@ -113,6 +116,7 @@ nano arduino_secrets.h
 ```
 
 ### 3. Configuration des profils (optionnel)
+
 ```bash
 # Éditer la configuration Arduino pour profil de fréquence
 nano iot-sensors-ucum/config.h
@@ -126,15 +130,17 @@ nano iot-sensors-ucum/config.h
 ## 🐳 Déploiement des services Docker
 
 ### 1. Déploiement complet
+
 ```bash
 # Lancer tous les services
-./scripts/deploy.sh
-
-# Ou manuellement
 docker-compose up -d
+
+# Vérifier le démarrage
+docker-compose logs --tail=50
 ```
 
 ### 2. Vérification des services
+
 ```bash
 # État des conteneurs
 docker-compose ps
@@ -147,6 +153,7 @@ docker-compose logs --tail=50
 ```
 
 **Services attendus :**
+
 ```
 NAME                STATE
 mosquitto          Up (healthy)
@@ -156,30 +163,30 @@ grafana            Up (healthy)
 ```
 
 ### 3. Configuration initiale InfluxDB
-```bash
-# Configuration automatique via script
-./scripts/setup-influxdb.sh
 
-# Ou manuellement
-docker-compose exec influxdb influx setup \
-  --username admin \
-  --password password123 \
-  --org iot-sensors \
-  --bucket sensor-data \
-  --force
+```bash
+# Les services se configurent automatiquement via compose.yml
+# Vérifier que InfluxDB est opérationnel
+curl http://localhost:8086/health
+
+# Accéder à l'interface web (optionnel)
+open http://localhost:8086
+# Credentials: admin / password123
 ```
 
-### 4. Import des dashboards Grafana
-```bash
-# Import automatique
-./scripts/import-grafana-dashboards.sh
+### 4. Accès aux dashboards Grafana
 
-# Vérification manuelle via http://localhost:3000
+```bash
+# Les dashboards sont automatiquement provisionnés via compose.yml
+# Accéder à l'interface web
+open http://localhost:3000
+# Credentials: admin / admin123
 ```
 
 ## 📱 Configuration et upload Arduino
 
 ### 1. Préparation de l'Arduino IDE
+
 ```bash
 # Installer les bibliothèques via Library Manager
 # Ou script automatique
@@ -187,11 +194,13 @@ docker-compose exec influxdb influx setup \
 ```
 
 ### 2. Configuration de la carte
+
 - **Outil → Type de carte** : Arduino MKR WiFi 1010
 - **Outil → Port** : Sélectionner le port USB approprié
 - **Outil → Programmateur** : Arduino as ISP
 
 ### 3. Compilation et upload
+
 ```bash
 # Via Arduino IDE : Sketch → Vérifier/Compiler
 # Puis : Sketch → Téléverser
@@ -202,12 +211,14 @@ arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:samd:mkrwifi1010 iot-sensors-u
 ```
 
 ### 4. Vérification du fonctionnement
+
 ```bash
 # Moniteur série Arduino IDE : 9600 bauds
 # Vérifier les logs de connexion WiFi et MQTT
 ```
 
 **Logs attendus :**
+
 ```text
 === Arduino IoT Sensors - Standard UCUM ===
 Version: 1.8 (Frequency Profiles)
@@ -224,6 +235,7 @@ Connecté au broker MQTT
 ## ✅ Validation du déploiement
 
 ### 1. Tests automatiques
+
 ```bash
 # Validation complète du système
 ./scripts/validate.sh
@@ -237,6 +249,7 @@ Connecté au broker MQTT
 ### 2. Vérification manuelle des services
 
 #### Test MQTT
+
 ```bash
 # Écouter les messages en temps réel
 mosquitto_sub -h localhost -p 1883 \
@@ -250,6 +263,7 @@ mosquitto_pub -h localhost -p 1883 \
 ```
 
 #### Test InfluxDB
+
 ```bash
 # Interface web
 open http://localhost:8086
@@ -264,6 +278,7 @@ curl -H "Authorization: Token $INFLUX_TOKEN" \
 ```
 
 #### Test Grafana
+
 ```bash
 # Interface web
 open http://localhost:3000
@@ -275,6 +290,7 @@ open http://localhost:3000
 ### 3. Vérification des données
 
 #### Réception des données Arduino
+
 ```bash
 # Logs Telegraf pour voir les données reçues
 docker-compose logs -f telegraf | grep "sensors/"
@@ -284,6 +300,7 @@ docker-compose logs -f telegraf | grep "sensors/"
 ```
 
 #### Dashboard fonctionnel  
+
 - **Variables** : Device ID sélectionnable
 - **Panneaux** : Séries temporelles pour chaque type UCUM
 - **Données** : Mise à jour temps réel selon profil de fréquence
@@ -291,6 +308,7 @@ docker-compose logs -f telegraf | grep "sensors/"
 ## 🔧 Optimisation post-déploiement
 
 ### 1. Calibration des capteurs
+
 ```bash
 # Comparer avec instruments de référence
 # Éditer les offsets dans config.h si nécessaire
@@ -302,6 +320,7 @@ nano iot-sensors-ucum/config.h
 ```
 
 ### 2. Ajustement des profils de fréquence
+
 ```bash
 # Selon les besoins opérationnels
 # HIGH : Monitoring critique (10s)
@@ -310,6 +329,7 @@ nano iot-sensors-ucum/config.h
 ```
 
 ### 3. Configuration des alertes Grafana
+
 ```bash
 # Via interface Grafana : Alerting → Alert Rules
 # Configurer seuils selon environnement :
@@ -321,6 +341,7 @@ nano iot-sensors-ucum/config.h
 ## 📊 Monitoring de production
 
 ### 1. Surveillance continue
+
 ```bash
 # Script de monitoring automatique
 ./scripts/monitor.sh
@@ -333,6 +354,7 @@ docker stats
 ```
 
 ### 2. Maintenance périodique
+
 ```bash
 # Nettoyage des logs (hebdomadaire)
 ./scripts/cleanup-logs.sh
@@ -345,6 +367,7 @@ docker stats
 ```
 
 ### 3. Alertes opérationnelles
+
 - **Device offline** : Pas de données depuis > 2 × keepalive_interval
 - **Valeurs aberrantes** : Capteurs hors plages normales
 - **Services down** : Conteneurs Docker non opérationnels
@@ -356,6 +379,7 @@ docker stats
 ### Problèmes Docker fréquents
 
 #### Services ne démarrent pas
+
 ```bash
 # Vérifier les logs d'erreur
 docker-compose logs [service-name]
@@ -369,6 +393,7 @@ docker-compose up -d
 ```
 
 #### Problèmes de ports
+
 ```bash
 # Vérifier les ports utilisés
 sudo netstat -tulpn | grep :1883
@@ -382,6 +407,7 @@ GRAFANA_PORT=3001
 ```
 
 #### Problèmes de permissions
+
 ```bash
 # Fixer les permissions des volumes
 sudo chown -R $USER:$USER ./data
@@ -396,6 +422,7 @@ docker-compose up -d
 ### Problèmes Arduino fréquents
 
 #### Compilation échoue
+
 ```bash
 # Vérifier les bibliothèques installées
 arduino-cli lib list
@@ -409,6 +436,7 @@ arduino-cli lib install "ArduinoJson@6.19.4"
 ```
 
 #### Arduino ne se connecte pas au WiFi
+
 ```bash
 # Vérifier arduino_secrets.h
 grep SECRET_SSID ~/Documents/Arduino/iot-sensors-ucum/arduino_secrets.h
@@ -419,6 +447,7 @@ grep SECRET_SSID ~/Documents/Arduino/iot-sensors-ucum/arduino_secrets.h
 ```
 
 #### Connexion MQTT échoue
+
 ```bash
 # Vérifier les credentials MQTT dans arduino_secrets.h
 # Tester la connexion depuis l'ordinateur :
@@ -431,6 +460,7 @@ docker-compose logs mosquitto
 ### Problèmes de données
 
 #### Pas de données dans InfluxDB
+
 ```bash
 # Vérifier la réception MQTT
 mosquitto_sub -h localhost -p 1883 -u mqtt_user -P password -t "sensors/+/+" -v
@@ -446,6 +476,7 @@ curl -X POST "http://localhost:8086/api/v2/write?org=iot-sensors&bucket=sensor-d
 ```
 
 #### Grafana n'affiche pas les données
+
 ```bash
 # Vérifier la connexion InfluxDB dans Grafana
 # Configuration → Data Sources → InfluxDB
@@ -460,6 +491,7 @@ from(bucket: "sensor-data")
 ## 🔄 Mise à jour du système
 
 ### Mise à jour mineure (patch)
+
 ```bash
 # Sauvegarder les données
 ./scripts/backup.sh
@@ -475,6 +507,7 @@ docker-compose restart
 ```
 
 ### Mise à jour majeure (version)
+
 ```bash
 # Sauvegarder complètement
 ./scripts/full-backup.sh
@@ -498,6 +531,7 @@ docker-compose up -d
 ```
 
 ### Mise à jour firmware Arduino
+
 ```bash
 # Télécharger la nouvelle version
 cd ~/Documents/Arduino/iot-sensors-ucum
@@ -513,6 +547,7 @@ nano config.h
 ## 📋 Checklist de déploiement
 
 ### Pré-déploiement
+
 - [ ] Prérequis système vérifiés
 - [ ] Credentials configurés dans .env
 - [ ] Credentials Arduino configurés
@@ -520,6 +555,7 @@ nano config.h
 - [ ] Réseau WiFi accessible depuis Arduino
 
 ### Déploiement
+
 - [ ] Services Docker démarrés sans erreur
 - [ ] InfluxDB initialisé et accessible
 - [ ] Grafana accessible avec dashboards
@@ -528,6 +564,7 @@ nano config.h
 - [ ] Arduino connecté WiFi et MQTT
 
 ### Post-déploiement
+
 - [ ] Messages MQTT reçus dans broker
 - [ ] Données visibles dans InfluxDB
 - [ ] Dashboards Grafana mis à jour
@@ -536,6 +573,7 @@ nano config.h
 - [ ] Documentation mise à jour
 
 ### Production
+
 - [ ] Monitoring automatique activé
 - [ ] Backup planifiés configurés
 - [ ] Alertes opérationnelles testées
@@ -545,6 +583,7 @@ nano config.h
 ## 🎯 Déploiement multi-environnements
 
 ### Environnement de développement
+
 ```bash
 # Profil haute fréquence pour tests rapides
 MEASUREMENT_FREQUENCY=HIGH
@@ -557,6 +596,7 @@ DEBUG_SERIAL=true
 ```
 
 ### Environnement de test
+
 ```bash
 # Profil équilibré
 MEASUREMENT_FREQUENCY=MEDIUM
@@ -569,6 +609,7 @@ INFLUX_RETENTION=168h  # 7 jours
 ```
 
 ### Environnement de production
+
 ```bash
 # Profil selon besoins métier
 MEASUREMENT_FREQUENCY=MEDIUM  # ou LOW pour économie
@@ -583,6 +624,7 @@ INFLUX_RETENTION=720h  # 30 jours
 ## 📊 Métriques de déploiement
 
 ### Indicateurs de succès
+
 - **Uptime Arduino** : > 99%
 - **Latence MQTT** : < 1 seconde
 - **Perte de messages** : < 0.1%
@@ -590,6 +632,7 @@ INFLUX_RETENTION=720h  # 30 jours
 - **Temps de récupération** : < 5 minutes
 
 ### Monitoring de performance
+
 ```bash
 # Script de métriques automatique
 ./scripts/collect-metrics.sh

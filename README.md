@@ -10,6 +10,7 @@
 ## 🚀 Démarrage rapide
 
 ### Prérequis
+
 - Arduino MKR WiFi 1010 + MKR ENV Shield
 - Docker & Docker Compose
 - Arduino IDE avec bibliothèques : WiFiNINA, ArduinoMqttClient, Arduino_MKRENV, ArduinoECCX08, ArduinoJson
@@ -17,22 +18,24 @@
 ### Installation en 5 minutes
 
 1. **Configuration Arduino**
+
    ```bash
    cd ~/Documents/Arduino/iot-sensors-ucum
    cp arduino_secrets.h.template arduino_secrets.h
-   # Éditer avec vos paramètres WiFi
+   # Éditer avec vos paramètres WiFi et MQTT
    ```
 
-2. **Déploiement des services**
+2. **Déploiement des services Docker**
+
    ```bash
    cd /Users/dominique/Documents/Programmation/iot-sensors-ucum
-   ./install.sh
    docker-compose up -d
    ```
 
 3. **Upload du firmware Arduino** via Arduino IDE
 
 4. **Vérification**
+
    ```bash
    docker-compose ps
    open http://localhost:3000  # Grafana (admin/admin123)
@@ -41,12 +44,14 @@
 ## 📊 Fonctionnalités
 
 ### Capteurs supportés
+
 - **Température** : Standard UCUM `Cel` (°C)
 - **Humidité** : Standard UCUM `%` (% RH)
 - **Pression** : Standard UCUM `hPa` (hectopascal)
 - **Luminosité** : Standard UCUM `lx` (lux)
 
 ### Caractéristiques techniques
+
 - **ID unique** basé sur puce crypto ECCX08
 - **Transmission MQTT** avec métadonnées UCUM complètes
 - **Détection de changement** intelligente avec seuils configurables
@@ -55,6 +60,7 @@
 - **Surveillance connexion** avec keepalive configurable
 
 ### Stack technologique
+
 - **Arduino** : Firmware avec support UCUM complet
 - **MQTT** : Broker Mosquitto sécurisé
 - **InfluxDB** : Base de données time-series
@@ -65,6 +71,7 @@
 ## ⚙️ Configuration
 
 ### Profils de fréquence (v1.8)
+
 ```cpp
 // Configuration ultra-simple dans config.h
 #define MEASUREMENT_FREQUENCY HIGH    // Temps réel (10s)
@@ -73,6 +80,7 @@
 ```
 
 ### Calibration des capteurs (v1.6)
+
 ```cpp
 // Corrections dans config.h (valeurs à soustraire)
 #define TEMPERATURE_OFFSET 2.5    // °C
@@ -82,6 +90,7 @@
 ```
 
 ### Messages MQTT compacts (v1.1)
+
 ```cpp
 // Format optimisé pour réseaux contraints
 #define USE_COMPACT_FORMAT true   // Messages 68% plus petits
@@ -91,6 +100,7 @@
 ## 📡 Données et API
 
 ### Messages MQTT exemple
+
 ```json
 {
   "device_id": "mkr1010_AA1D11EE",
@@ -103,13 +113,15 @@
 ```
 
 ### Endpoints services
-- **Grafana** : http://localhost:3000 (admin/admin123)
-- **InfluxDB** : http://localhost:8086 (admin/password123)  
+
+- **Grafana** : <http://localhost:3000> (admin/admin123)
+- **InfluxDB** : <http://localhost:8086> (admin/password123)  
 - **MQTT** : localhost:1883 (mqtt_user/mqtt_password)
 
 ## 🔧 Administration
 
 ### Surveillance système
+
 ```bash
 # État des services
 docker-compose ps
@@ -122,6 +134,7 @@ mosquitto_sub -h localhost -p 1883 -u mqtt_user -P mqtt_password -t "sensors/+/+
 ```
 
 ### Validation complète
+
 ```bash
 # Vérifier les services Docker
 docker-compose ps
@@ -145,6 +158,7 @@ curl http://localhost:8086/health
 ## 🏆 Standards et conformité
 
 ### Standards respectés
+
 - **UCUM** : Unified Code for Units of Measure
 - **IEEE** : Standards de communication électronique  
 - **ISO 11240:2012** : Identification des unités
@@ -152,6 +166,7 @@ curl http://localhost:8086/health
 - **JSON** : Format d'échange de données
 
 ### Validations
+
 - **Codes UCUM** vérifiés selon spécifications officielles
 - **Métadonnées** complètes pour interopérabilité
 - **Validation temps réel** des plages de valeurs
@@ -160,19 +175,22 @@ curl http://localhost:8086/health
 ## 🚨 Support et contribution
 
 ### Signaler un problème
+
 1. Vérifier l'état des services : `docker-compose ps`
 2. Consulter [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 3. Créer une issue avec les logs
 
 ### Développement
+
 ```bash
 # Environnement de développement
 git clone [repository]
 cd iot-sensors-ucum
-./install.sh
+
+# Démarrage des services
+docker-compose up -d
 
 # Tests manuels
-docker-compose up -d
 docker-compose logs
 ```
 
