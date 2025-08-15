@@ -75,3 +75,6 @@ docker-volumes/
 *.backup
 *.bak
 *.old
+.venv/
+*.egg-info/
+__pycache__/
