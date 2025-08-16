@@ -22,7 +22,7 @@ Ce guide détaille le processus complet de déploiement du système IoT Sensors 
 
 ### Bibliothèques Arduino
 
-```
+```text
 WiFiNINA >= 1.8.13
 ArduinoMqttClient >= 0.1.5
 Arduino_MKRENV >= 1.2.1
@@ -154,7 +154,7 @@ docker-compose logs --tail=50
 
 **Services attendus :**
 
-```
+```text
 NAME                STATE
 mosquitto          Up (healthy)
 influxdb           Up (healthy)  
