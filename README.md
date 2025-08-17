@@ -2,7 +2,7 @@
 
 **Système de monitoring IoT utilisant Arduino MKR WiFi 1010 avec conformité aux standards UCUM (Unified Code for Units of Measure)**
 
-[![Version](https://img.shields.io/badge/Version-1.1.1-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.2.0-blue.svg)](CHANGELOG.md)
 [![Arduino](https://img.shields.io/badge/Arduino-MKR_WiFi_1010-green.svg)](https://www.arduino.cc/en/Guide/MKR1000)
 [![UCUM](https://img.shields.io/badge/Standard-UCUM-orange.svg)](https://ucum.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -79,6 +79,20 @@ topics = ["sensors/+/+"]
 
 # Format de données Arduino optimisé
 {"v": 23.5, "u": "Cel", "t": "2025-08-17T16:35:31Z"}
+```
+
+### Stack complètement stable (v1.2)
+
+```bash
+# Vérification de l'état des services
+docker compose ps  # Tous les services UP
+docker compose logs --tail=10  # Aucune erreur
+
+# Services opérationnels
+# 🟢 Mosquitto: Sans erreurs de configuration
+# 🟢 InfluxDB: Organisation iot-sensors, bucket sensor-data
+# 🟢 Telegraf: Collecte MQTT externe + processing UCUM
+# 🟢 Grafana: Dashboard fonctionnel + provisioning complet
 ```
 
 ### Profils de fréquence (v1.8)
@@ -211,5 +225,5 @@ MIT License - Voir [LICENSE](LICENSE) pour détails complets.
 
 ---
 
-**Projet IoT Sensors UCUM v1.1.1** - *Monitoring environnemental Arduino avec conformité UCUM*  
+**Projet IoT Sensors UCUM v1.2.0** - *Monitoring environnemental Arduino avec conformité UCUM*  
 Développé par **Dominique Dessy** - Août 2025

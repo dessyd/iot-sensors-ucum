@@ -5,6 +5,26 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-08-17
+
+### Corrigé
+- **Erreurs Mosquitto** : Résolution complète des erreurs de configuration MQTT
+- **Paramètres invalides** : Suppression de `keepalive_interval` et `message_size_limit` non supportés
+- **Configuration MQTT** : Simplification vers une configuration minimale et fonctionnelle
+- **Fichiers obsolètes** : Suppression du fichier `passwd` inutilisé
+
+### Amélioré
+- **Stabilité Mosquitto** : Configuration robuste sans erreurs
+- **Performance** : Configuration optimisée pour l'usage IoT
+- **Logs propres** : Plus d'erreurs dans les logs des services
+- **Documentation** : Stack complètement opérationnelle
+
+### Technique
+- **Configuration MQTT** : Listeners 1883 (MQTT) et 9001 (WebSocket)
+- **Authentification** : Mode anonyme pour serveur externe
+- **Persistance** : Données sauvegardées dans volumes Docker
+- **Limites** : 100 connexions, 20 messages en vol, 1000 en file
+
 ## [1.1.1] - 2025-08-17
 
 ### Corrigé
