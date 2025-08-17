@@ -1,27 +1,34 @@
+# compose.yaml
 services:
-  # Base de données InfluxDB v2
+  # InfluxDB 2.x for time-series data storage
+  # Ref: https://docs.influxdata.com/influxdb/v2/install/use-docker-compose/#set-up-using-docker-compose-secrets
   influxdb:
-    image: influxdb:2.7-alpine
-    container_name: iot-influxdb
+    image: influxdb:2
     ports:
-      - "8086:8086"
+      - 8086:8086
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=password123
-      - DOCKER_INFLUXDB_INIT_ORG=iot-sensors
-      - DOCKER_INFLUXDB_INIT_BUCKET=sensor-data
-      - DOCKER_INFLUXDB_INIT_RETENTION=30d
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb-admin-username
+      DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb-admin-password
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb-admin-token
+      DOCKER_INFLUXDB_INIT_ORG: iot-sensors
+      DOCKER_INFLUXDB_INIT_BUCKET: sensor-data
+    secrets:
+      - influxdb-admin-username
+      - influxdb-admin-password
+      - influxdb-admin-token
     volumes:
-      - influxdb_data:/var/lib/influxdb2
-      - ./influxdb/config:/etc/influxdb2
+      - type: volume
+        source: influxdb-data
+        target: /var/lib/influxdb
+      - type: volume
+        source: influxdb-config
+        target: /etc/influxdb
     networks:
       - iot-network
-    restart: unless-stopped
     labels:
       - "project=iot-sensors-ucum"
-      - "component=database"
+      - "component=visualization"
 
   # Broker MQTT Mosquitto
   mosquitto:
@@ -64,12 +71,12 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin123
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
-      - GF_SECURITY_ADMIN_USER=admin
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - grafana_data:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     networks:
@@ -81,11 +88,19 @@ services:
       - "project=iot-sensors-ucum"
       - "component=visualization"
 
+
+secrets:
+  influxdb-admin-username:
+    file: ./.env.influxdb-admin-username
+  influxdb-admin-password:
+    file: ./.env.influxdb-admin-password
+  influxdb-admin-token:
+    file: ./.env.influxdb-admin-token
 volumes:
-  influxdb_data:
-    name: iot-influxdb-data
-  grafana_data:
-    name: iot-grafana-data
+  influxdb-data:
+  influxdb-config:
+  grafana-data:
+
 
 networks:
   iot-network:

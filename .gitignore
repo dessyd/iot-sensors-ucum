@@ -68,6 +68,9 @@ secrets.yml
 secrets.yaml
 .secrets
 
+# Fichiers secrets InfluxDB Docker
+.env.influxdb*
+
 # Volumes Docker
 docker-volumes/
 

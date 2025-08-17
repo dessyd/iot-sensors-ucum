@@ -12,5 +12,22 @@ datasources:
       defaultBucket: sensor-data
       tlsSkipVerify: true
     secureJsonData:
-      token: my-super-secret-auth-token
+      token: MyInitialAdminToken0==
+    editable: true
+    
+  # Alternative datasource utilisant username/password au lieu du token
+  - name: InfluxDB-UserPass
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    user: dd
+    database: sensor-data
+    jsonData:
+      version: Flux
+      organization: iot-sensors
+      defaultBucket: sensor-data
+      tlsSkipVerify: true
+      httpMode: POST
+    secureJsonData:
+      password: Password$
     editable: true

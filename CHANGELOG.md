@@ -5,6 +5,35 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-08-17
+
+### Ajouté
+- **Support serveur MQTT externe** : Configuration pour utiliser un broker MQTT externe (192.168.1.15)
+- **Dashboard Grafana optimisé** : Interface utilisateur améliorée avec codes UCUM
+- **Authentification unifiée** : Possibilité d'utiliser les mêmes identifiants entre services
+
+### Modifié
+- **Configuration Telegraf** : Simplifiée et optimisée pour le serveur MQTT externe
+- **Format des données** : Adaptation au format Arduino réel `{v, u, t}`
+- **Topics MQTT** : Support du pattern `sensors/{device_id}/{sensor_type}`
+- **Processeurs Telegraf** : Suppression du processeur Starlark problématique, utilisation de processeurs natifs
+- **Organisation InfluxDB** : Changement vers `iot-sensors` et bucket `sensor-data`
+
+### Supprimé
+- **Fichiers obsolètes** : Nettoyage des configurations Telegraf inutilisées
+- **Scripts Starlark** : Suppression des fichiers de test et conversion non fonctionnels
+- **Broker MQTT local** : Configuration pour utiliser un serveur externe
+
+### Corrigé
+- **Erreurs Telegraf** : Résolution des problèmes de configuration avec les processeurs
+- **Authentification InfluxDB** : Correction des tokens et organisation
+- **Structure JSON Grafana** : Correction du format de dashboard
+- **Parsing MQTT** : Adaptation au format réel des données Arduino
+
+### Sécurité
+- **Fichiers secrets** : Ajout des fichiers `.env.influxdb*` au .gitignore
+- **Isolation des identifiants** : Meilleure séparation des secrets Docker
+
 ## [1.0.0] - 2025-08-12
 
 ### Ajouté
