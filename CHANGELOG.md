@@ -5,6 +5,19 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-08-17
+
+### Corrigé
+- **Erreurs Grafana** : Résolution des erreurs de provisioning et de dashboard
+- **Répertoires manquants** : Ajout des répertoires `plugins/`, `notifiers/`, `alerting/` pour le provisioning
+- **Structure dashboard** : Correction de la structure JSON avec tous les champs requis
+- **UID dashboard** : Suppression de l'UID fixe pour génération automatique par Grafana
+- **Références datasource** : Ajout des références correctes au datasource InfluxDB
+
+### Ajouté
+- **Fichiers .gitkeep** : Maintien de la structure des répertoires de provisioning dans Git
+- **Dashboard optimisé** : Structure JSON complète compatible Grafana v10.2.0
+
 ## [1.1.0] - 2025-08-17
 
 ### Ajouté
