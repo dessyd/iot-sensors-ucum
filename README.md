@@ -178,17 +178,20 @@ curl -G 'http://localhost:8086/query' \
 ## 🆕 Nouveautés v2.1
 
 ### ✅ Améliorations Arduino
+
 - **Format unifié** : Suppression des doubles formats complexes
 - **Robustesse** : Protection débordement avec `unsigned long`
 - **Simplicité** : Opérateur modulo pour cycles keepalive
 - **Performance** : Une seule logique de test unifié
 
 ### ✅ Améliorations Telegraf
+
 - **Configuration simplifiée** : Collecte seulement les mesures
 - **Filtrage LWT** : Ignore automatiquement les messages "offline"
 - **Performance** : Moins de processors, plus d'efficacité
 
 ### ✅ Améliorations Grafana
+
 - **Dashboard v2.0** : Interface moderne avec emojis
 - **Table récapitulative** : Vue d'ensemble des dernières valeurs
 - **Refresh optimisé** : 10s au lieu de 30s
