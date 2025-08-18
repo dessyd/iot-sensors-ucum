@@ -5,6 +5,40 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-08-18
+
+### Ajouté
+- **Format unifié v2.0** : Un seul format de message pour tous les capteurs
+- **Protection débordement** : Variables `unsigned long` avec reset préventif à 1M cycles
+- **Dashboard Grafana v2.0** : Interface moderne avec emojis et table récapitulative
+- **Variable template Grafana** : Filtrage par device_id
+- **Requêtes optimisées** : Utilisation de `sensor_type` au lieu de `ucum_code`
+
+### Modifié
+- **Logique Arduino** : Test unifié `(changement >= seuil) OR (compteur % KEEPALIVE_COUNT == 0)`
+- **Compteur keepalive** : Utilisation de l'opérateur modulo au lieu de reset manuel
+- **Configuration Telegraf** : Collecte seulement les mesures, ignore les status/LWT
+- **Messages MQTT** : Format compact `{"v": value, "u": "unit", "t": "timestamp"}`
+- **Type variables** : `measurementCounter` en `unsigned long` (32 bits)
+
+### Supprimé
+- **Formats multiples** : Plus de gestion de deux formats différents
+- **Reset manuel compteur** : Remplacé par l'opérateur modulo
+- **Messages LWT** : Ignorés par Telegraf pour éviter la pollution
+- **Fonctions obsolètes** : `sendKeepalive()`, `sendKeepaliveCompact()`, `sendMeasurementUCUM()`
+
+### Corrigé
+- **Débordement compteur** : Protection avec variables 32 bits
+- **Simplicité code** : Une seule logique de test au lieu de deux
+- **Performance Telegraf** : Configuration optimisée sans processeurs inutiles
+- **Structure InfluxDB** : Données propres avec fields `value`, `ucum_code`, `sensor_timestamp`
+
+### Technique
+- **Arduino v2.0** : Code unifié avec robustesse améliorée
+- **Telegraf v2.1** : Topics spécifiques pour mesures seulement
+- **Grafana v2.0** : Dashboard avec panels optimisés et refresh 10s
+- **Capacité système** : 1,360 années avant débordement (vs 91h avant)
+
 ## [1.2.0] - 2025-08-17
 
 ### Corrigé

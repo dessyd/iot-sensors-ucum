@@ -2,7 +2,7 @@
 
 **Système de monitoring IoT utilisant Arduino MKR WiFi 1010 avec conformité aux standards UCUM (Unified Code for Units of Measure)**
 
-[![Version](https://img.shields.io/badge/Version-1.2.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.1.0-blue.svg)](CHANGELOG.md)
 [![Arduino](https://img.shields.io/badge/Arduino-MKR_WiFi_1010-green.svg)](https://www.arduino.cc/en/Guide/MKR1000)
 [![UCUM](https://img.shields.io/badge/Standard-UCUM-orange.svg)](https://ucum.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -32,7 +32,7 @@
    docker-compose up -d
    ```
 
-3. **Upload du firmware Arduino** via Arduino IDE
+3. **Upload du firmware Arduino v2.1** via Arduino IDE
 
 4. **Vérification**
 
@@ -41,7 +41,7 @@
    open http://localhost:3000  # Grafana (admin/admin123)
    ```
 
-## 📊 Fonctionnalités
+## 📊 Fonctionnalités v2.1
 
 ### Capteurs supportés
 
@@ -50,100 +50,106 @@
 - **Pression** : Standard UCUM `hPa` (hectopascal)
 - **Luminosité** : Standard UCUM `lx` (lux)
 
-### Caractéristiques techniques
+### Caractéristiques techniques v2.1
 
+- **Format unifié v2.0** : Un seul format de message pour tous les capteurs
+- **Compteur de keepalive intelligent** : Simplification avec opérateur modulo
+- **Protection débordement** : Variables `unsigned long` avec reset préventif
 - **ID unique** basé sur puce crypto ECCX08
-- **Transmission MQTT** avec métadonnées UCUM complètes
+- **Transmission MQTT** optimisée avec filtrage LWT
 - **Détection de changement** intelligente avec seuils configurables
 - **Calibration** des capteurs avec offsets personnalisables
 - **Profils de fréquence** prédéfinis (HIGH/MEDIUM/LOW)
-- **Surveillance connexion** avec keepalive configurable
 
-### Stack technologique
+### Architecture v2.1
 
-- **Arduino** : Firmware avec support UCUM complet
-- **MQTT** : Broker Mosquitto sécurisé
-- **InfluxDB** : Base de données time-series
-- **Telegraf** : Collecte et enrichissement des données
-- **Grafana** : Dashboards et alerting temps réel
-- **Docker** : Orchestration complète
+- **Arduino** : Firmware unifié v2.0 avec robustesse améliorée
+- **MQTT** : Messages compacts `{"v": value, "u": "unit", "t": "timestamp"}`
+- **Telegraf** : Configuration simplifiée pour mesures uniquement
+- **InfluxDB** : Structure optimisée avec fields `value`, `ucum_code`, `sensor_timestamp`
+- **Grafana** : Dashboard v2.0 avec panels optimisés et table récapitulative
 
-## ⚙️ Configuration
+## ⚙️ Configuration v2.1
 
-### Configuration serveur MQTT externe (v1.1)
+### Format unifié Arduino (v2.0)
 
-```bash
-# Dans telegraf/telegraf.conf - serveur externe
-servers = ["tcp://192.168.1.15:1883"]
-topics = ["sensors/+/+"]
+```cpp
+// Un seul test pour envoi : changement OU keepalive
+if (abs(temperature - lastTemperature) >= tempConfig.threshold || forceKeepalive) {
+    sendMeasurementUnified("temperature", temperature, tempConfig);
+    lastTemperature = temperature;
+}
 
-# Format de données Arduino optimisé
-{"v": 23.5, "u": "Cel", "t": "2025-08-17T16:35:31Z"}
+// Compteur intelligent avec modulo
+bool forceKeepalive = (measurementCounter % KEEPALIVE_MEASUREMENT_COUNT) == 0;
 ```
 
-### Stack complètement stable (v1.2)
+### Messages MQTT v2.0
 
-```bash
-# Vérification de l'état des services
-docker compose ps  # Tous les services UP
-docker compose logs --tail=10  # Aucune erreur
+```json
+// Format unifié pour toutes les mesures
+{"v": 23.75, "u": "Cel", "t": "2025-08-18T10:16:58Z"}
 
-# Services opérationnels
-# 🟢 Mosquitto: Sans erreurs de configuration
-# 🟢 InfluxDB: Organisation iot-sensors, bucket sensor-data
-# 🟢 Telegraf: Collecte MQTT externe + processing UCUM
-# 🟢 Grafana: Dashboard fonctionnel + provisioning complet
+// Format status simplifié 
+{"v": "online", "ip": "192.168.1.122", "t": "2025-08-18T10:16:59Z", "c": 19}
 ```
 
-### Profils de fréquence (v1.8)
+### Configuration Telegraf v2.1
+
+```toml
+# Collecte UNIQUEMENT les mesures (ignore les status/LWT)
+topics = ["sensors/+/temperature", "sensors/+/humidity", "sensors/+/pressure", "sensors/+/illuminance"]
+
+# Renommage automatique v → value, u → ucum_code, t → sensor_timestamp
+```
+
+### Profils de fréquence
 
 ```cpp
 // Configuration ultra-simple dans config.h
-#define MEASUREMENT_FREQUENCY HIGH    // Temps réel (10s)
-#define MEASUREMENT_FREQUENCY MEDIUM  // Équilibré (30s) - défaut
-#define MEASUREMENT_FREQUENCY LOW     // Économe (60s)
+#define MEASUREMENT_FREQUENCY HIGH    // 10s, keepalive 6 cycles
+#define MEASUREMENT_FREQUENCY MEDIUM  // 30s, keepalive 10 cycles (défaut)
+#define MEASUREMENT_FREQUENCY LOW     // 60s, keepalive 15 cycles
 ```
 
-### Calibration des capteurs (v1.6)
+### Protection débordement (v2.1)
 
 ```cpp
-// Corrections dans config.h (valeurs à soustraire)
-#define TEMPERATURE_OFFSET 2.5    // °C
-#define HUMIDITY_OFFSET 0.0       // %RH  
-#define PRESSURE_OFFSET 0.0       // hPa
-#define ILLUMINANCE_OFFSET 0.0    // lx
+// Variables robustes
+unsigned long measurementCounter = 0;  // 32 bits au lieu de 16
+if (measurementCounter >= 1000000UL) { measurementCounter = 0; } // Reset préventif
 ```
 
-### Messages MQTT compacts (v1.1)
+## 📡 Données et API v2.1
 
-```cpp
-// Format optimisé pour réseaux contraints
-#define USE_COMPACT_FORMAT true   // Messages 68% plus petits
-#define USE_COMPACT_FORMAT false  // Format UCUM complet (défaut)
+### Requêtes InfluxDB optimisées
+
+```flux
+// Nouvelle structure de données v2.1
+from(bucket: "sensor-data")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "mqtt_consumer")
+  |> filter(fn: (r) => r["_field"] == "value")
+  |> filter(fn: (r) => r["sensor_type"] == "temperature")
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
 ```
 
-## 📡 Données et API
+### Dashboard Grafana v2.0
 
-### Messages MQTT exemple
-
-```json
-{
-  "device_id": "mkr1010_AA1D11EE",
-  "sensor_type": "temperature", 
-  "value": 23.5,
-  "ucum": {"code": "Cel", "display": "°C"},
-  "validation": {"in_range": true},
-  "timestamp": "2025-08-13T15:06:05Z"
-}
-```
+- 🌡️ **Température** avec seuils colorés intelligents
+- 💧 **Humidité** avec échelle 0-100%
+- 🌪️ **Pression** avec seuils météorologiques
+- ☀️ **Illuminance** avec gradients lumineux
+- 📊 **Table récapitulative** des dernières valeurs
+- 🔄 **Refresh automatique** toutes les 10 secondes
 
 ### Endpoints services
 
-- **Grafana** : <http://localhost:3000> (admin/admin123)
-- **InfluxDB** : <http://localhost:8086> (admin/password123)  
-- **MQTT** : localhost:1883 (mqtt_user/mqtt_password)
+- **Grafana v2.0** : <http://localhost:3000> (admin/admin123)
+- **InfluxDB** : <http://localhost:8086> (dd/Password$)  
+- **MQTT** : 192.168.1.15:1883 (serveur externe)
 
-## 🔧 Administration
+## 🔧 Administration v2.1
 
 ### Surveillance système
 
@@ -151,51 +157,68 @@ docker compose logs --tail=10  # Aucune erreur
 # État des services
 docker-compose ps
 
-# Logs en temps réel
+# Logs Telegraf v2.1
 docker-compose logs -f telegraf
 
-# Test des messages MQTT
-mosquitto_sub -h localhost -p 1883 -u mqtt_user -P mqtt_password -t "sensors/+/+"
+# Test direct serveur MQTT externe
+mosquitto_sub -h 192.168.1.15 -p 1883 -t "sensors/#"
 ```
 
-### Validation complète
+### Validation v2.1
 
 ```bash
-# Vérifier les services Docker
-docker-compose ps
+# Vérifier format unifié des messages
+mosquitto_sub -h 192.168.1.15 -p 1883 -t "sensors/+/+" -v
 
-# Test de connectivité MQTT
-mosquitto_pub -h localhost -p 1883 -u mqtt_user -P mqtt_password -t "test" -m "hello"
-
-# Vérification base de données
-curl http://localhost:8086/health
+# Vérification données InfluxDB
+curl -G 'http://localhost:8086/query' \
+  --data-urlencode "q=SELECT * FROM mqtt_consumer WHERE time > now() - 1h"
 ```
+
+## 🆕 Nouveautés v2.1
+
+### ✅ Améliorations Arduino
+- **Format unifié** : Suppression des doubles formats complexes
+- **Robustesse** : Protection débordement avec `unsigned long`
+- **Simplicité** : Opérateur modulo pour cycles keepalive
+- **Performance** : Une seule logique de test unifié
+
+### ✅ Améliorations Telegraf
+- **Configuration simplifiée** : Collecte seulement les mesures
+- **Filtrage LWT** : Ignore automatiquement les messages "offline"
+- **Performance** : Moins de processors, plus d'efficacité
+
+### ✅ Améliorations Grafana
+- **Dashboard v2.0** : Interface moderne avec emojis
+- **Table récapitulative** : Vue d'ensemble des dernières valeurs
+- **Refresh optimisé** : 10s au lieu de 30s
+- **Variable template** : Filtrage par device_id
 
 ## 📚 Documentation
 
-- **[Guide technique](docs/TECHNICAL.md)** : Architecture et implémentation détaillées
-- **[Configuration](docs/CONFIGURATION.md)** : Guide de configuration complète
+- **[Guide technique v2.1](docs/TECHNICAL.md)** : Architecture unifiée détaillée
+- **[Configuration v2.1](docs/CONFIGURATION.md)** : Guide de configuration simplifiée
+- **[Migration v1→v2](docs/MIGRATION.md)** : Guide de migration vers format unifié
 - **[Déploiement](docs/DEPLOYMENT.md)** : Installation et mise en production
-- **[Dépannage](docs/TROUBLESHOOTING.md)** : Solutions aux problèmes courants
+- **[Dépannage v2.1](docs/TROUBLESHOOTING.md)** : Solutions aux problèmes courants
 - **[Historique](CHANGELOG.md)** : Versions et améliorations
-- **[Archives versions](docs/versions/)** : Notes détaillées des versions
 
 ## 🏆 Standards et conformité
 
-### Standards respectés
+### Standards respectés v2.1
 
-- **UCUM** : Unified Code for Units of Measure
+- **UCUM** : Unified Code for Units of Measure (format compact)
 - **IEEE** : Standards de communication électronique  
 - **ISO 11240:2012** : Identification des unités
 - **MQTT 3.1.1** : Protocole messaging IoT
-- **JSON** : Format d'échange de données
+- **JSON** : Format d'échange de données optimisé
 
-### Validations
+### Validations v2.1
 
-- **Codes UCUM** vérifiés selon spécifications officielles
-- **Métadonnées** complètes pour interopérabilité
+- **Messages unifiés** vérifiés selon format v2.0
+- **Métadonnées UCUM** simplifiées mais complètes
 - **Validation temps réel** des plages de valeurs
-- **Monitoring** de santé du système
+- **Monitoring robuste** sans pollution LWT
 
 ## 🚨 Support et contribution
 
@@ -205,18 +228,19 @@ curl http://localhost:8086/health
 2. Consulter [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 3. Créer une issue avec les logs
 
-### Développement
+### Développement v2.1
 
 ```bash
 # Environnement de développement
 git clone [repository]
 cd iot-sensors-ucum
+git checkout dev-v2
 
-# Démarrage des services
+# Démarrage des services v2.1
 docker-compose up -d
 
-# Tests manuels
-docker-compose logs
+# Tests format unifié
+docker-compose logs telegraf
 ```
 
 ## 📄 Licence
@@ -225,5 +249,5 @@ MIT License - Voir [LICENSE](LICENSE) pour détails complets.
 
 ---
 
-**Projet IoT Sensors UCUM v1.2.0** - *Monitoring environnemental Arduino avec conformité UCUM*  
+**Projet IoT Sensors UCUM v2.1.0** - *Format unifié avec robustesse améliorée*  
 Développé par **Dominique Dessy** - Août 2025

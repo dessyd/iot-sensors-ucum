@@ -3,7 +3,7 @@
  * Conforme au standard UCUM (Unified Code for Units of Measure)
  * 
  * Auteur: Dominique Dessy
- * Version: 1.0
+ * Version: 2.0 - Format unifié
  */
 
 #ifndef CONFIG_H
@@ -41,6 +41,14 @@
 #define KEEPALIVE_INTERVAL (MEASUREMENT_INTERVAL * KEEPALIVE_MULTIPLIER)
 #define SENSOR_READ_DELAY 2000           // Délai entre lectures capteurs
 
+// ===== NOUVEAU: Configuration du compteur de keepalive =====
+// Définit après combien de cycles de mesure on force l'envoi (keepalive)
+#define KEEPALIVE_MEASUREMENT_COUNT KEEPALIVE_MULTIPLIER  // Utilise la même valeur que le multiplier
+// Par exemple: 
+// - HIGH: toutes les 6 mesures (6 × 10s = 1min)
+// - MEDIUM: toutes les 10 mesures (10 × 30s = 5min)
+// - LOW: toutes les 15 mesures (15 × 1min = 15min)
+
 // Topics MQTT
 #define TOPIC_PREFIX "sensors/"
 #define TOPIC_TEMPERATURE "temperature"
@@ -53,8 +61,8 @@
 #define DEBUG_SERIAL true
 #define SERIAL_BAUD 9600
 
-// Format des messages MQTT
-#define USE_COMPACT_FORMAT true  // true = format compact, false = format UCUM complet
+// Format des messages MQTT - SIMPLIFIÉ en v2.0
+#define USE_COMPACT_FORMAT true  // true = format compact {"v":40.65,"u":"lx","t":"..."}, false = format UCUM complet
 
 // Gestion du flag RETAIN pour les messages MQTT
 #define USE_RETAIN_STATUS false        // true = status retained, false = monitoring temps réel
