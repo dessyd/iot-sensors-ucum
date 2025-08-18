@@ -43,6 +43,12 @@
 
 ## 📊 Fonctionnalités v2.1
 
+### Dashboard Grafana v2.0
+
+![Dashboard IoT Sensors v2.1](assets/dashboard-v2.1-screenshot.png)
+
+*Exemple de dashboard Grafana v2.0 en temps réel avec données des deux Arduinos*
+
 ### Capteurs supportés
 
 - **Température** : Standard UCUM `Cel` (°C)
@@ -140,7 +146,7 @@ from(bucket: "sensor-data")
 - 💧 **Humidité** avec échelle 0-100%
 - 🌪️ **Pression** avec seuils météorologiques
 - ☀️ **Illuminance** avec gradients lumineux
-- 📊 **Table récapitulative** des dernières valeurs
+- 📋 **Table récapitulative** des dernières valeurs
 - 🔄 **Refresh automatique** toutes les 10 secondes
 
 ### Endpoints services
