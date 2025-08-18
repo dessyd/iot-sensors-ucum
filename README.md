@@ -38,8 +38,10 @@
 
    ```bash
    docker-compose ps
-   open http://localhost:3000  # Grafana (admin/admin123)
+   open http://localhost:3000  # Grafana (voir .env pour identifiants)
    ```
+
+**Note sécurité** : Les identifiants Grafana sont maintenant configurés via variables d'environnement dans `.env`. Modifiez `GRAFANA_ADMIN_USER` et `GRAFANA_ADMIN_PASSWORD` selon vos besoins.
 
 ## 📊 Fonctionnalités v2.1
 
@@ -151,7 +153,7 @@ from(bucket: "sensor-data")
 
 ### Endpoints services
 
-- **Grafana v2.0** : <http://localhost:3000> (admin/admin123)
+- **Grafana v2.0** : <http://localhost:3000> (voir .env pour identifiants)
 - **InfluxDB** : <http://localhost:8086> (dd/Password$)  
 - **MQTT** : 192.168.1.15:1883 (serveur externe)
 
