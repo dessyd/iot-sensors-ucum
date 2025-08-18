@@ -5,6 +5,37 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-08-18
+
+### Sécurité
+- **Variables d'environnement Grafana** : Déplacement des identifiants vers `.env`
+- **Configuration sécurisée** : Suppression des credentials codés en dur de `compose.yml`
+- **Protection fichier .env** : Ajout au `.gitignore` pour éviter commit accidentel
+- **Documentation sécurisée** : Mise à jour README avec références `.env`
+
+### Ajouté
+- **Répertoire assets/** : Structure pour ressources visuelles du projet
+- **Capture d'écran dashboard** : Exemple visuel Grafana v2.0 en action
+- **Variables Grafana** : `GRAFANA_ADMIN_USER` et `GRAFANA_ADMIN_PASSWORD`
+- **Documentation visuelle** : Section dashboard avec image dans README
+
+### Modifié
+- **compose.yml** : Utilisation variables `${GRAFANA_ADMIN_USER}` et `${GRAFANA_ADMIN_PASSWORD}`
+- **.env.example** : Ajout variables Grafana pour documentation
+- **README.md** : Références identifiants via `.env` au lieu de valeurs codées
+- **Timezone** : Mise à jour Europe/Brussels dans `.env.example`
+
+### Corrigé
+- **Sécurité credentials** : Plus d'identifiants visibles dans le repository
+- **Configuration flexible** : Adaptation facile selon environnement
+- **Documentation cohérente** : Suppression doublons section dashboard
+
+### Technique
+- **Variables Docker Compose** : Support complet des variables d'environnement
+- **Structure assets/** : Préparation pour futures ressources visuelles
+- **Capture d'écran** : dashboard-v2.1-screenshot.png (692 KB)
+- **Configuration centralisée** : Toutes variables sensibles dans `.env`
+
 ## [2.1.0] - 2025-08-18
 
 ### Ajouté
