@@ -5,6 +5,35 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-08-19
+
+### Ajouté
+- **Guide Telegraf complet** : Documentation détaillée dans `docs/TELEGRAF_CONFIGURATION.md`
+- **Processors expliqués** : Guide étape par étape des transformations de données
+- **Monitoring Telegraf** : Métriques internes et debug avancé
+- **Requêtes Flux optimisées** : Exemples pour InfluxDB v2
+- **Variables d'environnement** : Configuration Telegraf externalisée
+- **Support Feinstaub** : Documentation de l'intégration capteurs particules
+
+### Modifié
+- **README v2.2** : Mise à jour avec nouvelle documentation Telegraf
+- **Section Documentation** : Ajout du guide Telegraf dans la liste
+- **Nouveautés v2.2** : Focus sur documentation et maintenance
+- **Version badges** : Mise à jour vers v2.2.0
+
+### Documentation
+- **Architecture des données** : Schéma complet Arduino → Feinstaub → Telegraf → InfluxDB
+- **Configuration détaillée** : Tous les paramètres Telegraf expliqués
+- **Troubleshooting avancé** : Solutions aux problèmes Telegraf courants
+- **Bonnes pratiques** : Configuration, performance et sécurité
+- **Exemples concrets** : Formats de données et transformations
+
+### Technique
+- **Standards rédaction** : Blocs de code avec tags appropriés (conformément aux préférences)
+- **Structure organisée** : Documentation claire dans répertoire `docs/`
+- **Git workflow** : Versioning sémantique et commits structurés
+- **Maintenance projet** : Documentation technique complète pour faciliter contributions
+
 ## [2.1.1] - 2025-08-18
 
 ### Sécurité

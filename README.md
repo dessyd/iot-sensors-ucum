@@ -2,7 +2,7 @@
 
 **Système de monitoring IoT utilisant Arduino MKR WiFi 1010 avec conformité aux standards UCUM (Unified Code for Units of Measure)**
 
-[![Version](https://img.shields.io/badge/Version-2.1.1-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.2.0-blue.svg)](CHANGELOG.md)
 [![Arduino](https://img.shields.io/badge/Arduino-MKR_WiFi_1010-green.svg)](https://www.arduino.cc/en/Guide/MKR1000)
 [![UCUM](https://img.shields.io/badge/Standard-UCUM-orange.svg)](https://ucum.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -43,7 +43,7 @@
 
 **Note sécurité** : Les identifiants Grafana sont maintenant configurés via variables d'environnement dans `.env`. Modifiez `GRAFANA_ADMIN_USER` et `GRAFANA_ADMIN_PASSWORD` selon vos besoins.
 
-## 📊 Fonctionnalités v2.1
+## 📊 Fonctionnalités v2.2
 
 ### Dashboard Grafana v2.0
 
@@ -58,7 +58,7 @@
 - **Pression** : Standard UCUM `hPa` (hectopascal)
 - **Luminosité** : Standard UCUM `lx` (lux)
 
-### Caractéristiques techniques v2.1
+### Caractéristiques techniques v2.2
 
 - **Format unifié v2.0** : Un seul format de message pour tous les capteurs
 - **Compteur de keepalive intelligent** : Simplification avec opérateur modulo
@@ -69,7 +69,7 @@
 - **Calibration** des capteurs avec offsets personnalisables
 - **Profils de fréquence** prédéfinis (HIGH/MEDIUM/LOW)
 
-### Architecture v2.1
+### Architecture v2.2
 
 - **Arduino** : Firmware unifié v2.0 avec robustesse améliorée
 - **MQTT** : Messages compacts `{"v": value, "u": "unit", "t": "timestamp"}`
@@ -77,7 +77,7 @@
 - **InfluxDB** : Structure optimisée avec fields `value`, `ucum_code`, `sensor_timestamp`
 - **Grafana** : Dashboard v2.0 avec panels optimisés et table récapitulative
 
-## ⚙️ Configuration v2.1
+## ⚙️ Configuration v2.2
 
 ### Format unifié Arduino (v2.0)
 
@@ -128,7 +128,7 @@ unsigned long measurementCounter = 0;  // 32 bits au lieu de 16
 if (measurementCounter >= 1000000UL) { measurementCounter = 0; } // Reset préventif
 ```
 
-## 📡 Données et API v2.1
+## 📡 Données et API v2.2
 
 ### Requêtes InfluxDB optimisées
 
@@ -157,7 +157,7 @@ from(bucket: "sensor-data")
 - **InfluxDB** : <http://localhost:8086> (dd/Password$)  
 - **MQTT** : 192.168.1.15:1883 (serveur externe)
 
-## 🔧 Administration v2.1
+## 🔧 Administration v2.2
 
 ### Surveillance système
 
@@ -183,35 +183,38 @@ curl -G 'http://localhost:8086/query' \
   --data-urlencode "q=SELECT * FROM mqtt_consumer WHERE time > now() - 1h"
 ```
 
-## 🆕 Nouveautés v2.1
+## 🆕 Nouveautés v2.2
 
-### ✅ Améliorations Arduino
+### ✅ Améliorations Documentation v2.2
 
-- **Format unifié** : Suppression des doubles formats complexes
-- **Robustesse** : Protection débordement avec `unsigned long`
-- **Simplicité** : Opérateur modulo pour cycles keepalive
-- **Performance** : Une seule logique de test unifié
+- **Guide Telegraf complet** : Documentation détaillée de la configuration Telegraf
+- **Processors expliqués** : Guide étape par étape des transformations
+- **Troubleshooting avancé** : Solutions aux problèmes Telegraf courants
+- **Requêtes optimisées** : Exemples Flux pour InfluxDB
+- **Monitoring intégré** : Métriques et debug Telegraf
 
-### ✅ Améliorations Telegraf
+### ✅ Améliorations Configuration
 
-- **Configuration simplifiée** : Collecte seulement les mesures
-- **Filtrage LWT** : Ignore automatiquement les messages "offline"
-- **Performance** : Moins de processors, plus d'efficacité
+- **Variables d'environnement** : Configuration Telegraf externalisée
+- **Format unifié** : Documentation du processus de transformation
+- **Support Feinstaub** : Integration capteurs de particules fines
+- **Performance monitoring** : Métriques internes Telegraf
 
-### ✅ Améliorations Grafana
+### ✅ Maintenance projet
 
-- **Dashboard v2.0** : Interface moderne avec emojis
-- **Table récapitulative** : Vue d'ensemble des dernières valeurs
-- **Refresh optimisé** : 10s au lieu de 30s
-- **Variable template** : Filtrage par device_id
+- **Structure docs/** : Organisation claire de la documentation
+- **Standards rédaction** : Blocs de code avec tags appropriés
+- **Versioning sémantique** : v2.2.0 avec nouvelles fonctionnalités
+- **Git workflow** : Commit et push automatisés
 
 ## 📚 Documentation
 
-- **[Guide technique v2.1](docs/TECHNICAL.md)** : Architecture unifiée détaillée
-- **[Configuration v2.1](docs/CONFIGURATION.md)** : Guide de configuration simplifiée
+- **[Guide technique v2.2](docs/TECHNICAL.md)** : Architecture unifiée détaillée
+- **[Configuration v2.2](docs/CONFIGURATION.md)** : Guide de configuration simplifiée
+- **[Configuration Telegraf](docs/TELEGRAF_CONFIGURATION.md)** : Guide détaillé Telegraf v2.2
 - **[Migration v1→v2](docs/MIGRATION.md)** : Guide de migration vers format unifié
 - **[Déploiement](docs/DEPLOYMENT.md)** : Installation et mise en production
-- **[Dépannage v2.1](docs/TROUBLESHOOTING.md)** : Solutions aux problèmes courants
+- **[Dépannage v2.2](docs/TROUBLESHOOTING.md)** : Solutions aux problèmes courants
 - **[Historique](CHANGELOG.md)** : Versions et améliorations
 
 ## 🏆 Standards et conformité
@@ -260,5 +263,5 @@ MIT License - Voir [LICENSE](LICENSE) pour détails complets.
 
 ---
 
-**Projet IoT Sensors UCUM v2.1.1** - *Configuration sécurisée et documentation enrichie*  
+**Projet IoT Sensors UCUM v2.2.0** - *Documentation Telegraf et configuration avancée*  
 Développé par **Dominique Dessy** - Août 2025
