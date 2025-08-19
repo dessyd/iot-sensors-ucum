@@ -14,33 +14,21 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Requêtes Flux optimisées** : Exemples pour InfluxDB v2
 - **Variables d'environnement** : Configuration Telegraf externalisée
 - **Support Feinstaub** : Documentation de l'intégration capteurs particules
+- **Architecture des données** : Schéma complet Arduino → Feinstaub → Telegraf → InfluxDB
+- **Troubleshooting avancé** : Solutions aux problèmes Telegraf courants
+- **Bonnes pratiques** : Configuration, performance et sécurité
+- **Exemples concrets** : Formats de données et transformations
 
 ### Modifié
 - **README v2.2** : Mise à jour avec nouvelle documentation Telegraf
 - **Section Documentation** : Ajout du guide Telegraf dans la liste
 - **Nouveautés v2.2** : Focus sur documentation et maintenance
 - **Version badges** : Mise à jour vers v2.2.0
-
-### Documentation
-- **Architecture des données** : Schéma complet Arduino → Feinstaub → Telegraf → InfluxDB
-- **Configuration détaillée** : Tous les paramètres Telegraf expliqués
-- **Troubleshooting avancé** : Solutions aux problèmes Telegraf courants
-- **Bonnes pratiques** : Configuration, performance et sécurité
-- **Exemples concrets** : Formats de données et transformations
-
-### Technique
 - **Standards rédaction** : Blocs de code avec tags appropriés (conformément aux préférences)
 - **Structure organisée** : Documentation claire dans répertoire `docs/`
 - **Git workflow** : Versioning sémantique et commits structurés
-- **Maintenance projet** : Documentation technique complète pour faciliter contributions
 
 ## [2.1.1] - 2025-08-18
-
-### Sécurité
-- **Variables d'environnement Grafana** : Déplacement des identifiants vers `.env`
-- **Configuration sécurisée** : Suppression des credentials codés en dur de `compose.yml`
-- **Protection fichier .env** : Ajout au `.gitignore` pour éviter commit accidentel
-- **Documentation sécurisée** : Mise à jour README avec références `.env`
 
 ### Ajouté
 - **Répertoire assets/** : Structure pour ressources visuelles du projet
@@ -59,7 +47,11 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Configuration flexible** : Adaptation facile selon environnement
 - **Documentation cohérente** : Suppression doublons section dashboard
 
-### Technique
+### Sécurité
+- **Variables d'environnement Grafana** : Déplacement des identifiants vers `.env`
+- **Configuration sécurisée** : Suppression des credentials codés en dur de `compose.yml`
+- **Protection fichier .env** : Ajout au `.gitignore` pour éviter commit accidentel
+- **Documentation sécurisée** : Mise à jour README avec références `.env`
 - **Variables Docker Compose** : Support complet des variables d'environnement
 - **Structure assets/** : Préparation pour futures ressources visuelles
 - **Capture d'écran** : dashboard-v2.1-screenshot.png (692 KB)
@@ -93,13 +85,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Performance Telegraf** : Configuration optimisée sans processeurs inutiles
 - **Structure InfluxDB** : Données propres avec fields `value`, `ucum_code`, `sensor_timestamp`
 
-### Technique
-- **Arduino v2.0** : Code unifié avec robustesse améliorée
-- **Telegraf v2.1** : Topics spécifiques pour mesures seulement
-- **Grafana v2.0** : Dashboard avec panels optimisés et refresh 10s
-- **Capacité système** : 1,360 années avant débordement (vs 91h avant)
-
 ## [1.2.0] - 2025-08-17
+
+### Modifié
+- **Stabilité Mosquitto** : Configuration robuste sans erreurs
+- **Performance** : Configuration optimisée pour l'usage IoT
+- **Logs propres** : Plus d'erreurs dans les logs des services
+- **Documentation** : Stack complètement opérationnelle
 
 ### Corrigé
 - **Erreurs Mosquitto** : Résolution complète des erreurs de configuration MQTT
@@ -107,19 +99,11 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Configuration MQTT** : Simplification vers une configuration minimale et fonctionnelle
 - **Fichiers obsolètes** : Suppression du fichier `passwd` inutilisé
 
-### Amélioré
-- **Stabilité Mosquitto** : Configuration robuste sans erreurs
-- **Performance** : Configuration optimisée pour l'usage IoT
-- **Logs propres** : Plus d'erreurs dans les logs des services
-- **Documentation** : Stack complètement opérationnelle
-
-### Technique
-- **Configuration MQTT** : Listeners 1883 (MQTT) et 9001 (WebSocket)
-- **Authentification** : Mode anonyme pour serveur externe
-- **Persistance** : Données sauvegardées dans volumes Docker
-- **Limites** : 100 connexions, 20 messages en vol, 1000 en file
-
 ## [1.1.1] - 2025-08-17
+
+### Ajouté
+- **Fichiers .gitkeep** : Maintien de la structure des répertoires de provisioning dans Git
+- **Dashboard optimisé** : Structure JSON complète compatible Grafana v10.2.0
 
 ### Corrigé
 - **Erreurs Grafana** : Résolution des erreurs de provisioning et de dashboard
@@ -127,10 +111,6 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Structure dashboard** : Correction de la structure JSON avec tous les champs requis
 - **UID dashboard** : Suppression de l'UID fixe pour génération automatique par Grafana
 - **Références datasource** : Ajout des références correctes au datasource InfluxDB
-
-### Ajouté
-- **Fichiers .gitkeep** : Maintien de la structure des répertoires de provisioning dans Git
-- **Dashboard optimisé** : Structure JSON complète compatible Grafana v10.2.0
 
 ## [1.1.0] - 2025-08-17
 
@@ -181,8 +161,6 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Documentation** : README complet, documentation technique
 - **Scripts** : Déploiement automatique et validation
 - **Git** : Structure projet avec .gitignore approprié
-
-### Caractéristiques techniques
 - **ID unique** : Basé sur puce crypto ECCX08 Arduino
 - **Transmission** : MQTT avec métadonnées UCUM complètes
 - **Détection changement** : Envoi intelligent selon seuils configurables
@@ -190,26 +168,11 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Conversion SI** : Automatique via processeurs Telegraf
 - **Rétention** : 30 jours par défaut avec nettoyage auto
 - **Alerting** : Règles Grafana pour valeurs critiques
-
-### Structure
-- Code Arduino dans `~/Documents/Arduino/iot-sensors-ucum/`
-- Lien symbolique depuis projet principal
-- Configuration Docker compose pour services
-- Dashboards Grafana pré-configurés
-- Scripts de déploiement et validation
-
-### Standards respectés
-- **UCUM** : Unified Code for Units of Measure
-- **IEEE** : Standards de communication électronique
-- **ISO 11240:2012** : Identification des unités
-- **MQTT 3.1.1** : Protocole messaging IoT
-- **JSON** : Format d'échange de données
-
-### Compatibilité
-- **OS** : macOS (testé), Linux, Windows (Docker)
-- **Arduino** : MKR1010 avec shield MKR ENV
-- **Réseau** : WiFi 2.4GHz/5GHz
-- **Navigateurs** : Chrome, Firefox, Safari (Grafana)
+- **Code Arduino** : Structure dans `~/Documents/Arduino/iot-sensors-ucum/`
+- **Lien symbolique** : Depuis projet principal
+- **Configuration Docker** : Compose pour services
+- **Dashboards Grafana** : Pré-configurés
+- **Scripts déploiement** : Automatique et validation
 
 ---
 
