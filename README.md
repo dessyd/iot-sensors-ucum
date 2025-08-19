@@ -3,7 +3,7 @@
 **Système de monitoring IoT utilisant Arduino MKR WiFi 1010 avec conformité aux standards UCUM (Unified Code for Units of Measure)**
 
 [![Version](https://img.shields.io/badge/Version-2.2.1-blue.svg)](CHANGELOG.md)
-[![Arduino](https://img.shields.io/badge/Arduino-MKR_WiFi_1010-green.svg)](https://www.arduino.cc/en/Guide/MKR1000)
+[![Arduino](https://img.shields.io/badge/Arduino-MKR_WiFi_1010-green.svg)](https://docs.arduino.cc/hardware/mkr-wifi-1010/)
 [![UCUM](https://img.shields.io/badge/Standard-UCUM-orange.svg)](https://ucum.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
