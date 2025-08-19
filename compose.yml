@@ -59,6 +59,8 @@ services:
     depends_on:
       - influxdb
       - mosquitto
+    ports:
+      - "8186:8086"
     restart: unless-stopped
     labels:
       - "project=iot-sensors-ucum"
