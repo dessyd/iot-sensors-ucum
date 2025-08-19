@@ -7,7 +7,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.2.0] - 2025-08-19
 
-### Ajouté
+### Ajouté en v2.2.0
 
 - **Guide Telegraf complet** : Documentation détaillée dans `docs/TELEGRAF_CONFIGURATION.md`
 - **Processors expliqués** : Guide étape par étape des transformations de données
@@ -20,7 +20,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Bonnes pratiques** : Configuration, performance et sécurité
 - **Exemples concrets** : Formats de données et transformations
 
-### Modifié
+### Modifié en v2.2.0
 
 - **README v2.2** : Mise à jour avec nouvelle documentation Telegraf
 - **Section Documentation** : Ajout du guide Telegraf dans la liste
@@ -32,27 +32,27 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.1.1] - 2025-08-18
 
-### Ajouté
+### Ajouté en v2.1.1
 
 - **Répertoire assets/** : Structure pour ressources visuelles du projet
 - **Capture d'écran dashboard** : Exemple visuel Grafana v2.0 en action
 - **Variables Grafana** : `GRAFANA_ADMIN_USER` et `GRAFANA_ADMIN_PASSWORD`
 - **Documentation visuelle** : Section dashboard avec image dans README
 
-### Modifié
+### Modifié en v2.1.1
 
 - **compose.yml** : Utilisation variables `${GRAFANA_ADMIN_USER}` et `${GRAFANA_ADMIN_PASSWORD}`
 - **.env.example** : Ajout variables Grafana pour documentation
 - **README.md** : Références identifiants via `.env` au lieu de valeurs codées
 - **Timezone** : Mise à jour Europe/Brussels dans `.env.example`
 
-### Corrigé
+### Corrigé en v2.1.1
 
 - **Sécurité credentials** : Plus d'identifiants visibles dans le repository
 - **Configuration flexible** : Adaptation facile selon environnement
 - **Documentation cohérente** : Suppression doublons section dashboard
 
-### Sécurité
+### Sécurité en v2.1.1
 
 - **Variables d'environnement Grafana** : Déplacement des identifiants vers `.env`
 - **Configuration sécurisée** : Suppression des credentials codés en dur de `compose.yml`
@@ -65,7 +65,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.1.0] - 2025-08-18
 
-### Ajouté
+### Ajouté en v2.1.0
 
 - **Format unifié v2.0** : Un seul format de message pour tous les capteurs
 - **Protection débordement** : Variables `unsigned long` avec reset préventif à 1M cycles
@@ -73,7 +73,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Variable template Grafana** : Filtrage par device_id
 - **Requêtes optimisées** : Utilisation de `sensor_type` au lieu de `ucum_code`
 
-### Modifié
+### Modifié en v2.1.0
 
 - **Logique Arduino** : Test unifié `(changement >= seuil) OR (compteur % KEEPALIVE_COUNT == 0)`
 - **Compteur keepalive** : Utilisation de l'opérateur modulo au lieu de reset manuel
@@ -81,14 +81,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Messages MQTT** : Format compact `{"v": value, "u": "unit", "t": "timestamp"}`
 - **Type variables** : `measurementCounter` en `unsigned long` (32 bits)
 
-### Supprimé
+### Supprimé en v2.1.0
 
 - **Formats multiples** : Plus de gestion de deux formats différents
 - **Reset manuel compteur** : Remplacé par l'opérateur modulo
 - **Messages LWT** : Ignorés par Telegraf pour éviter la pollution
 - **Fonctions obsolètes** : `sendKeepalive()`, `sendKeepaliveCompact()`, `sendMeasurementUCUM()`
 
-### Corrigé
+### Corrigé en v2.1.0
 
 - **Débordement compteur** : Protection avec variables 32 bits
 - **Simplicité code** : Une seule logique de test au lieu de deux
@@ -97,14 +97,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.2.0] - 2025-08-17
 
-### Modifié
+### Modifié en v1.2.0
 
 - **Stabilité Mosquitto** : Configuration robuste sans erreurs
 - **Performance** : Configuration optimisée pour l'usage IoT
 - **Logs propres** : Plus d'erreurs dans les logs des services
 - **Documentation** : Stack complètement opérationnelle
 
-### Corrigé
+### Corrigé en v1.2.0
 
 - **Erreurs Mosquitto** : Résolution complète des erreurs de configuration MQTT
 - **Paramètres invalides** : Suppression de `keepalive_interval` et `message_size_limit` non supportés
@@ -113,12 +113,12 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.1.1] - 2025-08-17
 
-### Ajouté
+### Ajouté en v1.1.1
 
 - **Fichiers .gitkeep** : Maintien de la structure des répertoires de provisioning dans Git
 - **Dashboard optimisé** : Structure JSON complète compatible Grafana v10.2.0
 
-### Corrigé
+### Corrigé en v1.1.1
 
 - **Erreurs Grafana** : Résolution des erreurs de provisioning et de dashboard
 - **Répertoires manquants** : Ajout des répertoires `plugins/`, `notifiers/`, `alerting/` pour le provisioning
@@ -128,13 +128,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.1.0] - 2025-08-17
 
-### Ajouté
+### Ajouté en v1.1.0
 
 - **Support serveur MQTT externe** : Configuration pour utiliser un broker MQTT externe (192.168.1.15)
 - **Dashboard Grafana optimisé** : Interface utilisateur améliorée avec codes UCUM
 - **Authentification unifiée** : Possibilité d'utiliser les mêmes identifiants entre services
 
-### Modifié
+### Modifié en v1.1.0
 
 - **Configuration Telegraf** : Simplifiée et optimisée pour le serveur MQTT externe
 - **Format des données** : Adaptation au format Arduino réel `{v, u, t}`
@@ -142,27 +142,27 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Processeurs Telegraf** : Suppression du processeur Starlark problématique, utilisation de processeurs natifs
 - **Organisation InfluxDB** : Changement vers `iot-sensors` et bucket `sensor-data`
 
-### Supprimé
+### Supprimé en v1.1.0
 
 - **Fichiers obsolètes** : Nettoyage des configurations Telegraf inutilisées
 - **Scripts Starlark** : Suppression des fichiers de test et conversion non fonctionnels
 - **Broker MQTT local** : Configuration pour utiliser un serveur externe
 
-### Corrigé
+### Corrigé en v1.1.0
 
 - **Erreurs Telegraf** : Résolution des problèmes de configuration avec les processeurs
 - **Authentification InfluxDB** : Correction des tokens et organisation
 - **Structure JSON Grafana** : Correction du format de dashboard
 - **Parsing MQTT** : Adaptation au format réel des données Arduino
 
-### Sécurité
+### Sécurité en v1.1.0
 
 - **Fichiers secrets** : Ajout des fichiers `.env.influxdb*` au .gitignore
 - **Isolation des identifiants** : Meilleure séparation des secrets Docker
 
 ## [1.0.0] - 2025-08-12
 
-### Ajouté
+### Ajouté en v1.0.0
 
 - **Arduino MKR1010 + MKR ENV Shield** : Support complet des capteurs environnementaux
 - **Standard UCUM** : Conformité aux codes internationaux pour les unités de mesure
@@ -198,26 +198,26 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### [X.Y.Z] - YYYY-MM-DD
 
-### Ajouté
+### Ajouté en vX.Y.Z
 
 - Nouvelles fonctionnalités
 
-### Modifié
+### Modifié en vX.Y.Z
 
 - Changements de fonctionnalités existantes
 
-### Déprécié
+### Déprécié en vX.Y.Z
 
 - Fonctionnalités bientôt supprimées
 
-### Supprimé
+### Supprimé en vX.Y.Z
 
 - Fonctionnalités supprimées
 
-### Corrigé
+### Corrigé en vX.Y.Z
 
 - Corrections de bugs
 
-### Sécurité
+### Sécurité en vX.Y.Z
 
 - Mises à jour de sécurité
