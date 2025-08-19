@@ -5,6 +5,21 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2025-08-19
+
+### Corrigé en v2.2.1
+
+- **Structure CHANGELOG** : Suppression des duplicates de headings Markdown
+- **Sections uniques** : Ajout suffixes version à tous les headings de section
+- **Conformité Markdown** : Résolution erreurs "multiple headings same content"
+- **Conservation standard** : Maintien des crochets format Keep a Changelog
+- **Template mis à jour** : Guide pour futures versions avec suffixes
+
+### Modifié en v2.2.1
+
+- **README badges** : Mise à jour version v2.2.1
+- **Versioning** : Application correcte Semantic Versioning (patch)
+
 ## [2.2.0] - 2025-08-19
 
 ### Ajouté en v2.2.0
