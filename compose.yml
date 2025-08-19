@@ -56,8 +56,6 @@ services:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     networks:
       - iot-network
-    ports:
-      - 8186:8086
     depends_on:
       - influxdb
       - mosquitto
