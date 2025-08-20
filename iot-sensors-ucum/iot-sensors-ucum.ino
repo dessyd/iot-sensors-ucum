@@ -2,7 +2,7 @@
  * Projet IoT Sensors - Arduino MKR1010 + MKR ENV Shield
  * Conforme au standard UCUM pour les unités
  * Version 2.1.0 - Format unifié avec robustesse améliorée
- * 
+ *
  * Auteur: Dominique Dessy
  * Date: Août 2025
  * Version: 2.1.0
@@ -20,7 +20,7 @@
 // Clients réseau et temps
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
-RTCZero rtc;  // RTC pour la gestion du temps
+RTCZero rtc; // RTC pour la gestion du temps
 
 // Variables globales
 String deviceId;
@@ -35,15 +35,19 @@ float lastPressure = -999;
 float lastIlluminance = -999;
 
 // ===== NOUVEAU: Compteur pour le keepalive unifié =====
-unsigned long measurementCounter = 0;  // Compteur de cycles de mesure (unsigned long pour éviter débordement)
+unsigned long measurementCounter = 0; // Compteur de cycles de mesure (unsigned long pour éviter débordement)
 
-void setup() {
-  if (DEBUG_SERIAL) {
+void setup()
+{
+  if (DEBUG_SERIAL)
+  {
     Serial.begin(SERIAL_BAUD);
 
     unsigned long startTime = millis();
-    while (!Serial) {
-      if (millis() - startTime > 5000) {
+    while (!Serial)
+    {
+      if (millis() - startTime > 5000)
+      {
         break;
       }
     }
@@ -54,9 +58,11 @@ void setup() {
   }
 
   // Initialisation du shield ENV
-  if (!ENV.begin()) {
+  if (!ENV.begin())
+  {
     Serial.println("ERREUR: Impossible d'initialiser le shield MKR ENV!");
-    while (1);
+    while (1)
+      ;
   }
 
   // Initialisation du RTC
@@ -75,7 +81,8 @@ void setup() {
   Serial.println("Unités conformes standard UCUM");
 
   // Affichage de la configuration
-  if (DEBUG_SERIAL) {
+  if (DEBUG_SERIAL)
+  {
     Serial.println("=== Configuration v2.1 ===");
 #if defined(MEASUREMENT_FREQUENCY) && (MEASUREMENT_FREQUENCY == HIGH)
     Serial.println("Fréquence: HIGH (temps réel)");
@@ -99,42 +106,51 @@ void setup() {
   measurementCounter = 0;
 }
 
-void loop() {
+void loop()
+{
   // Gestionnaire de connexion non-bloquant
-  if (WiFi.status() != WL_CONNECTED) {
+  if (WiFi.status() != WL_CONNECTED)
+  {
     connectToWiFi();
     delay(1000);
     return;
   }
 
-  if (!mqttClient.connected()) {
+  if (!mqttClient.connected())
+  {
     reconnectMQTT();
-  } else {
+  }
+  else
+  {
     mqttClient.poll();
   }
 
   unsigned long currentTime = millis();
 
   // Lecture et envoi des mesures à intervalle régulier
-  if (currentTime - lastMeasurement >= MEASUREMENT_INTERVAL) {
+  if (currentTime - lastMeasurement >= MEASUREMENT_INTERVAL)
+  {
     readAndSendWithKeepaliveLogic();
     lastMeasurement = currentTime;
     measurementCounter++;
-    
+
     // Protection contre le débordement: reset périodique du compteur
     // Reset tous les 1 million de cycles pour éviter tout problème
-    if (measurementCounter >= 1000000UL) {
+    if (measurementCounter >= 1000000UL)
+    {
       measurementCounter = 0;
     }
-    
+
     // Le modulo dans readAndSendWithKeepaliveLogic() gère automatiquement le cycle
   }
 
   delay(1000);
 }
 
-void generateDeviceId() {
-  if (!ECCX08.begin()) {
+void generateDeviceId()
+{
+  if (!ECCX08.begin())
+  {
     Serial.println("ATTENTION: Puce crypto non disponible, utilisation d'un ID par défaut");
     deviceId = "mkr1010_default_" + String(random(1000, 9999));
     return;
@@ -146,8 +162,10 @@ void generateDeviceId() {
   Serial.println("ID device généré: " + deviceId);
 }
 
-void connectToWiFi() {
-  if (WiFi.status() == WL_CONNECTED) {
+void connectToWiFi()
+{
+  if (WiFi.status() == WL_CONNECTED)
+  {
     return;
   }
 
@@ -155,22 +173,27 @@ void connectToWiFi() {
   WiFi.begin(SECRET_SSID, SECRET_PASS);
 
   unsigned long startAttemptTime = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
+  while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000)
+  {
     Serial.print(".");
     delay(500);
   }
 
-  if (WiFi.status() == WL_CONNECTED) {
+  if (WiFi.status() == WL_CONNECTED)
+  {
     Serial.println("\\nWiFi connecté!");
     Serial.print("Adresse IP: ");
     Serial.println(WiFi.localIP());
     syncRTCTime();
-  } else {
+  }
+  else
+  {
     Serial.println("\\nÉchec de la connexion WiFi. Nouvelle tentative à venir...");
   }
 }
 
-void setupMQTT() {
+void setupMQTT()
+{
   mqttClient.setUsernamePassword(SECRET_MQTT_USER, SECRET_MQTT_PASS);
 
   String clientId = MQTT_CLIENT_PREFIX + deviceId;
@@ -184,72 +207,85 @@ void setupMQTT() {
   mqttClient.endWill();
 }
 
-void reconnectMQTT() {
-  if (millis() < nextConnectionAttempt) {
+void reconnectMQTT()
+{
+  if (millis() < nextConnectionAttempt)
+  {
     return;
   }
 
   Serial.print("Tentative de connexion au broker MQTT... ");
 
-  if (mqttClient.connect(MQTT_SERVER, MQTT_PORT)) {
+  if (mqttClient.connect(MQTT_SERVER, MQTT_PORT))
+  {
     Serial.println("Connecté!");
     nextConnectionAttempt = 0;
-  } else {
+  }
+  else
+  {
     Serial.println("Échec. Nouvelle tentative dans 5 secondes.");
     nextConnectionAttempt = millis() + 5000;
   }
 }
 
 // ===== FONCTION PRINCIPALE UNIFIÉE =====
-void readAndSendWithKeepaliveLogic() {
+void readAndSendWithKeepaliveLogic()
+{
   // Lecture des capteurs avec application des corrections de calibration
-  float temperature = ENV.readTemperature() - TEMPERATURE_OFFSET;
+  float temperature = ENV.readTemperature(CELSIUS) - TEMPERATURE_OFFSET;
   float humidity = ENV.readHumidity() - HUMIDITY_OFFSET;
-  float pressure = ENV.readPressure() - PRESSURE_OFFSET;
-  float illuminance = ENV.readIlluminance() - ILLUMINANCE_OFFSET;
+  float pressure = ENV.readPressure(MILLIBAR) - PRESSURE_OFFSET;
+  float illuminance = ENV.readIlluminance(LUX) - ILLUMINANCE_OFFSET;
 
   delay(SENSOR_READ_DELAY);
 
   // Déterminer si c'est un cycle de keepalive (force l'envoi)
   bool forceKeepalive = (measurementCounter % KEEPALIVE_MEASUREMENT_COUNT) == 0;
-  
-  if (DEBUG_SERIAL && forceKeepalive) {
+
+  if (DEBUG_SERIAL && forceKeepalive)
+  {
     Serial.println("=== CYCLE KEEPALIVE (mesure " + String(measurementCounter) + ", cycle " + String((unsigned long)(measurementCounter / KEEPALIVE_MEASUREMENT_COUNT) + 1) + ") ===");
   }
 
   // Test unifié pour chaque capteur: changement significatif OU keepalive
   SensorConfigUCUM tempConfig = getSensorConfigUCUM("temperature");
-  if (abs(temperature - lastTemperature) >= tempConfig.threshold || forceKeepalive) {
+  if (abs(temperature - lastTemperature) >= tempConfig.threshold || forceKeepalive)
+  {
     sendMeasurementUnified("temperature", temperature, tempConfig);
     lastTemperature = temperature;
   }
 
   SensorConfigUCUM humConfig = getSensorConfigUCUM("humidity");
-  if (abs(humidity - lastHumidity) >= humConfig.threshold || forceKeepalive) {
+  if (abs(humidity - lastHumidity) >= humConfig.threshold || forceKeepalive)
+  {
     sendMeasurementUnified("humidity", humidity, humConfig);
     lastHumidity = humidity;
   }
 
   SensorConfigUCUM pressConfig = getSensorConfigUCUM("pressure");
-  if (abs(pressure - lastPressure) >= pressConfig.threshold || forceKeepalive) {
+  if (abs(pressure - lastPressure) >= pressConfig.threshold || forceKeepalive)
+  {
     sendMeasurementUnified("pressure", pressure, pressConfig);
     lastPressure = pressure;
   }
 
   SensorConfigUCUM lightConfig = getSensorConfigUCUM("illuminance");
-  if (abs(illuminance - lastIlluminance) >= lightConfig.threshold || forceKeepalive) {
+  if (abs(illuminance - lastIlluminance) >= lightConfig.threshold || forceKeepalive)
+  {
     sendMeasurementUnified("illuminance", illuminance, lightConfig);
     lastIlluminance = illuminance;
   }
 
   // Envoi d'un message de statut lors du keepalive
-  if (forceKeepalive) {
+  if (forceKeepalive)
+  {
     sendStatusUnified();
   }
 }
 
 // ===== FONCTIONS D'ENVOI UNIFIÉES (FORMAT COMPACT SEULEMENT) =====
-void sendMeasurementUnified(String sensorType, float value, SensorConfigUCUM config) {
+void sendMeasurementUnified(String sensorType, float value, SensorConfigUCUM config)
+{
   String topic = String(TOPIC_PREFIX) + deviceId + "/" + config.name;
 
   DynamicJsonDocument doc(128);
@@ -264,20 +300,22 @@ void sendMeasurementUnified(String sensorType, float value, SensorConfigUCUM con
   mqttClient.print(payload);
   mqttClient.endMessage();
 
-  if (DEBUG_SERIAL) {
+  if (DEBUG_SERIAL)
+  {
     String reason = (measurementCounter % KEEPALIVE_MEASUREMENT_COUNT) == 0 ? " [KEEPALIVE]" : " [CHANGE]";
     Serial.println("-> " + config.name + reason + ": " + payload);
   }
 }
 
-void sendStatusUnified() {
+void sendStatusUnified()
+{
   String topic = String(TOPIC_PREFIX) + deviceId + "/" + TOPIC_STATUS;
 
   DynamicJsonDocument doc(128);
   doc["v"] = "online";
   doc["ip"] = WiFi.localIP().toString();
   doc["t"] = getTimestamp();
-  doc["c"] = (unsigned long)(measurementCounter / KEEPALIVE_MEASUREMENT_COUNT) + 1;  // Numéro du cycle keepalive (division entière explicite)
+  doc["c"] = (unsigned long)(measurementCounter / KEEPALIVE_MEASUREMENT_COUNT) + 1; // Numéro du cycle keepalive (division entière explicite)
 
   String payload;
   serializeJson(doc, payload);
@@ -286,36 +324,44 @@ void sendStatusUnified() {
   mqttClient.print(payload);
   mqttClient.endMessage();
 
-  if (DEBUG_SERIAL) {
+  if (DEBUG_SERIAL)
+  {
     Serial.println("-> STATUS [KEEPALIVE]: " + payload);
   }
 }
 
 // ===== Fonctions utilitaires pour le temps =====
-void syncRTCTime() {
+void syncRTCTime()
+{
   unsigned long epoch;
   int attempts = 0;
 
   Serial.print("Synchronisation du RTC via NTP...");
-  do {
+  do
+  {
     epoch = WiFi.getTime();
-    if (epoch == 0) {
+    if (epoch == 0)
+    {
       Serial.print(".");
       delay(2000);
       attempts++;
     }
   } while (epoch == 0 && attempts < 5);
 
-  if (epoch > 0) {
+  if (epoch > 0)
+  {
     rtc.setEpoch(epoch);
     Serial.println("\\nRTC synchronisé!");
     Serial.println("Heure actuelle: " + getTimestamp());
-  } else {
+  }
+  else
+  {
     Serial.println("\\nERREUR: Impossible de synchroniser le RTC. Utilisation de l'heure par défaut.");
   }
 }
 
-String getTimestamp() {
+String getTimestamp()
+{
   char timestamp[25];
   sprintf(timestamp, "%04d-%02d-%02dT%02d:%02d:%02dZ",
           2000 + rtc.getYear(),
